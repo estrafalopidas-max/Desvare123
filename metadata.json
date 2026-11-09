@@ -1,0 +1,6 @@
+{
+  "name": "Desvares 123 — Mecánico de Motos y Montallantas a Domicilio",
+  "description": "Mecánico de motos a domicilio y montallantas para carros y motos en Envigado, Itagüí, Sabaneta, La Estrella y Medellín. Expertos en Full Inyección, Scooters, Escáner, Colisión y Motores.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

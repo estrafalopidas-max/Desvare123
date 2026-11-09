@@ -1,0 +1,159 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {
+  construirTriageWhatsapp,
+  filtrarServicios,
+  validarSolicitudDespacho,
+  obtenerMetadatosPorRuta,
+  construirSchemaJsonLd,
+  obtenerAtributosImagenOptimizada,
+  construirPayloadConversionGA4,
+  resolverUbicacionGpsAburra,
+} from './seoAndTriage';
+import { SERVICIOS_16, ZONAS_COBERTURA, BRAND_CONFIG } from '../data/desvaresData';
+
+test('resolverUbicacionGpsAburra detecta el municipio más cercano y formatea las coordenadas GPS', () => {
+  const enSabaneta = resolverUbicacionGpsAburra(6.1518, -75.6162);
+  assert.equal(enSabaneta.zonaSlug, 'sabaneta');
+  assert.equal(enSabaneta.zonaNombre, 'Sabaneta');
+  assert.ok(enSabaneta.barrioFormateado.includes('GPS: 6.1518, -75.6162'));
+
+  const enEnvigado = resolverUbicacionGpsAburra(6.1701, -75.5880);
+  assert.equal(enEnvigado.zonaSlug, 'envigado');
+  assert.equal(enEnvigado.zonaNombre, 'Envigado');
+
+  const fallback = resolverUbicacionGpsAburra(Number.NaN, Number.NaN, 'itagui');
+  assert.equal(fallback.zonaSlug, 'itagui');
+  assert.ok(fallback.barrioFormateado.includes('GPS:'));
+});
+
+test('construirPayloadConversionGA4 estructura el evento personalizado solicitar_rescate_ahora para GA4', () => {
+  const evento = construirPayloadConversionGA4({
+    ubicacionBoton: 'navbar_superior',
+    servicioId: 'montallantas-carros-y-motos',
+    zonaSlug: 'itagui',
+    canalContacto: 'formulario_web',
+  });
+
+  assert.equal(evento.eventName, 'solicitar_rescate_ahora');
+  assert.equal(evento.eventParams.event_category, 'conversion_rescate');
+  assert.equal(evento.eventParams.button_text, 'Solicitar Rescate Ahora');
+  assert.equal(evento.eventParams.ubicacion_boton, 'navbar_superior');
+  assert.equal(evento.eventParams.currency, 'COP');
+  assert.equal(evento.eventParams.value, 1);
+});
+
+test('Catálogo contiene exactamente los 16 servicios solicitados por el cliente con imágenes WebP únicas', () => {
+  assert.equal(SERVICIOS_16.length, 16);
+  const ids = SERVICIOS_16.map((s) => s.id);
+  assert.ok(ids.includes('la-moto-no-prende'));
+  assert.ok(ids.includes('montallantas-carros-y-motos'));
+  assert.ok(ids.includes('experto-motos-scooter'));
+  assert.ok(ids.includes('full-inyeccion'));
+  assert.ok(ids.includes('scaner-motos'));
+  assert.ok(ids.includes('colision-y-siniestros'));
+  assert.ok(ids.includes('reparacion-de-motores'));
+
+  const urlsWebp = new Set(SERVICIOS_16.map((s) => s.imagenUrl));
+  assert.equal(urlsWebp.size, 16, 'Cada uno de los 16 servicios debe tener su propia imagen WebP única');
+  for (const s of SERVICIOS_16) {
+    assert.ok(s.imagenUrl.endsWith('.webp'));
+  }
+});
+
+test('obtenerAtributosImagenOptimizada configura lazy loading, async decoding y srcSet WebP responsivo', () => {
+  const attrsCatalogo = obtenerAtributosImagenOptimizada(
+    '/images/servicios/la-moto-no-prende.webp',
+    { esMiniaturaCatalogo: true }
+  );
+  assert.equal(attrsCatalogo.loading, 'lazy');
+  assert.equal(attrsCatalogo.decoding, 'async');
+  assert.equal(attrsCatalogo.fetchPriority, 'low');
+  assert.ok(attrsCatalogo.webpSrcSet.includes('_360w.webp 360w'));
+  assert.ok(attrsCatalogo.webpSrcSet.includes('.webp 600w'));
+  assert.equal(attrsCatalogo.fallbackJpg, '/images/servicios/la-moto-no-prende.jpg');
+
+  const attrsHero = obtenerAtributosImagenOptimizada(BRAND_CONFIG.imagenes.hero, {
+    esPrioritaria: true,
+  });
+  assert.equal(attrsHero.loading, 'eager');
+  assert.equal(attrsHero.fetchPriority, 'high');
+  assert.ok(attrsHero.webpSrcSet.includes('_640w.webp 640w'));
+});
+
+test('construirTriageWhatsapp incluye el número +57 300 1899288 y cotización gratis sin barrera de cobro previo', () => {
+  const resultado = construirTriageWhatsapp({
+    servicioId: 'montallantas-carros-y-motos',
+    zonaSlug: 'sabaneta',
+    barrio: 'Aves María',
+    tipoVehiculo: 'Carro / Camioneta',
+    vehiculoMarcaModelo: 'Mazda CX-30',
+  });
+
+  assert.equal(resultado.zona.nombre, 'Sabaneta');
+  assert.ok(resultado.urlWhatsapp.startsWith(`https://wa.me/${BRAND_CONFIG.whatsappNumero}?text=`));
+  assert.ok(resultado.mensajeTextoPlano.includes('Aves María'));
+  assert.ok(resultado.mensajeTextoPlano.includes('cotización gratis'));
+  assert.ok(!resultado.mensajeTextoPlano.includes('30.000'));
+  assert.ok(resultado.mensajeTextoPlano.includes('Mazda CX-30'));
+});
+
+test('filtrarServicios filtra por categoría y término de búsqueda correctamente', () => {
+  const todos = filtrarServicios('todos', '');
+  assert.equal(todos.length, 16);
+
+  const urgencias = filtrarServicios('urgencia_vial', '');
+  assert.equal(urgencias.length, 4);
+
+  const scooters = filtrarServicios('todos', 'scooter');
+  assert.ok(scooters.length >= 1);
+  assert.ok(scooters.some((s) => s.id === 'experto-motos-scooter'));
+
+  const vacio = filtrarServicios('todos', 'servicio-inexistente-xyz');
+  assert.equal(vacio.length, 0);
+});
+
+test('validarSolicitudDespacho exige campos básicos sin bloqueo por tarifa previa', () => {
+  const invalido = validarSolicitudDespacho({
+    nombreCliente: '',
+    telefonoContacto: '123',
+    zonaSlug: 'itagui',
+    barrio: '',
+    servicioId: 'la-moto-no-prende',
+    tipoVehiculo: 'Moto',
+    referenciaVehiculo: '',
+    detallesFalla: '',
+  });
+
+  assert.equal(invalido.valido, false);
+  assert.ok(invalido.errores.nombreCliente);
+  assert.ok(invalido.errores.telefonoContacto);
+  assert.ok(invalido.errores.barrio);
+  assert.ok(invalido.errores.referenciaVehiculo);
+
+  const valido = validarSolicitudDespacho({
+    nombreCliente: 'Carlos Ramírez',
+    telefonoContacto: '3001899288',
+    zonaSlug: 'envigado',
+    barrio: 'Las Vegas',
+    servicioId: 'scaner-motos',
+    tipoVehiculo: 'Scooter',
+    referenciaVehiculo: 'Yamaha NMAX 155',
+    detallesFalla: 'Testigo FI encendido',
+  });
+
+  assert.equal(valido.valido, true);
+  assert.equal(Object.keys(valido.errores).length, 0);
+});
+
+test('obtenerMetadatosPorRuta y construirSchemaJsonLd devuelven SEO local exacto por municipio', () => {
+  const metaItagui = obtenerMetadatosPorRuta('/zona/itagui', 'https://desvares123.com');
+  assert.ok(metaItagui.title.includes('Itagüí'));
+  assert.equal(metaItagui.canonical, 'https://desvares123.com/zona/itagui');
+  assert.equal(metaItagui.zonaActiva?.slug, 'itagui');
+
+  const schema = construirSchemaJsonLd('https://desvares123.com', 'envigado');
+  assert.equal(schema['@graph'].length, 2);
+  assert.equal(ZONAS_COBERTURA.length, 5);
+});
+

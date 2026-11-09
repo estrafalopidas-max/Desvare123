@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Desvares 123 – Mecánico de Motos y Montallantas a Domicilio</title>
+    <meta
+      name="description"
+      content="¿Tu moto no prende o te pinchaste? Mecánico de motos a domicilio y montallantas para carros y motos en Itagüí, Sabaneta, Envigado, La Estrella y Medellín. Llegamos en 25 min."
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://desvares123.com/" />
+
+    <!-- OpenGraph Social Cards -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Desvares 123" />
+    <meta property="og:locale" content="es_CO" />
+    <meta
+      property="og:title"
+      content="Desvares 123 – Mecánico de Motos y Montallantas a Domicilio"
+    />
+    <meta
+      property="og:description"
+      content="Asistencia inmediata en vía, casa u oficina. Expertos en mecánica de motos, montallantas carros y motos, full inyección, escáner, scooters, colisión y motores."
+    />
+    <meta property="og:url" content="https://desvares123.com/" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Desvares 123 – Mecánico de Motos y Montallantas a Domicilio"
+    />
+    <meta
+      name="twitter:description"
+      content="¿La moto no prende o necesitas despinche de carro o moto? Unidades móviles en Itagüí, Sabaneta, Envigado, La Estrella y Medellín."
+    />
+
+    <!-- Precarga de la imagen principal en formato WebP para LCP ultra rápido en redes 3G/4G -->
+    <link
+      rel="preload"
+      as="image"
+      href="/images/hero_motorcycle_rescue_1794237578669.webp"
+      type="image/webp"
+      fetchpriority="high"
+    />
+
+    <!-- Google Fonts: Barlow Condensed (Display), Plus Jakarta Sans (Body), JetBrains Mono (Tabular Data) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Google Analytics 4 (GA4) - Medición de Conversiones Reales Desvares 123 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DESVARES123"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      window.__eventosConversionGA4 = window.__eventosConversionGA4 || [];
+      function gtag() {
+        window.dataLayer.push(arguments);
+      }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-DESVARES123', {
+        send_page_view: true,
+        currency: 'COP'
+      });
+
+      // Seguimiento personalizado de conversiones para el botón 'Solicitar Rescate Ahora'
+      window.registrarConversionRescate = function (detalles) {
+        var parametrosEvento = Object.assign(
+          {
+            event_category: 'conversion_rescate',
+            event_label: 'Solicitar Rescate Ahora',
+            button_text: 'Solicitar Rescate Ahora',
+            ubicacion_boton: 'navbar_principal',
+            servicio_id: 'asistencia_inmediata',
+            municipio_zona: 'valle_de_aburra',
+            canal_contacto: 'formulario_web',
+            currency: 'COP',
+            value: 1
+          },
+          detalles || {}
+        );
+        window.__eventosConversionGA4.push({
+          event: 'solicitar_rescate_ahora',
+          params: parametrosEvento,
+          timestamp: new Date().toISOString()
+        });
+        gtag('event', 'solicitar_rescate_ahora', parametrosEvento);
+      };
+
+      document.addEventListener('click', function (e) {
+        var elemento =
+          e.target && e.target.closest
+            ? e.target.closest('[data-ga-conversion="solicitar-rescate-ahora"]')
+            : null;
+        if (!elemento) return;
+
+        window.registrarConversionRescate({
+          event_label:
+            elemento.getAttribute('data-ga-label') ||
+            (elemento.textContent ? elemento.textContent.trim() : 'Solicitar Rescate Ahora'),
+          ubicacion_boton: elemento.getAttribute('data-ga-location') || 'cta_principal',
+          servicio_id: elemento.getAttribute('data-ga-service') || 'la-moto-no-prende',
+          municipio_zona: elemento.getAttribute('data-ga-zone') || 'itagui',
+          canal_contacto: elemento.getAttribute('data-ga-channel') || 'formulario_web'
+        });
+      });
+    </script>
+  </head>
+  <body class="bg-[#F8FAFC] text-[#0F172A] antialiased selection:bg-[#FF5500] selection:text-white">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
