@@ -96,6 +96,25 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
     esPrioritaria: true,
   });
 
+  const esCarroOCamioneta = tipoVehiculo === 'Carro / Camioneta';
+  const serviciosDisponibles = esCarroOCamioneta
+    ? SERVICIOS_16.filter(
+        (s) => s.id === 'montallantas-carros-y-motos' || s.id === 'reinicio-de-bateria'
+      )
+    : SERVICIOS_16;
+
+  const seleccionarTipoVehiculo = (tipo: 'Moto' | 'Scooter' | 'Carro / Camioneta') => {
+    setTipoVehiculo(tipo);
+    if (tipo === 'Carro / Camioneta') {
+      if (
+        servicioSeleccionadoId !== 'montallantas-carros-y-motos' &&
+        servicioSeleccionadoId !== 'reinicio-de-bateria'
+      ) {
+        onSelectServicio('montallantas-carros-y-motos');
+      }
+    }
+  };
+
   return (
     <section
       id="asistencia-inmediata"
@@ -217,32 +236,10 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
               </div>
 
               <div className="space-y-3.5">
-                {/* Paso 1: Servicio requerido */}
-                <div>
-                  <label
-                    htmlFor="triage-servicio"
-                    className="block text-xs font-semibold text-slate-700 mb-1"
-                  >
-                    1. ¿Qué necesitas hoy?
-                  </label>
-                  <select
-                    id="triage-servicio"
-                    value={servicioSeleccionadoId}
-                    onChange={(e) => onSelectServicio(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-sm font-medium text-slate-900 focus:outline-none focus:border-[#FF5500]"
-                  >
-                    {SERVICIOS_16.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.numero}. {s.tituloCorto} — ({s.etiquetaCategoria})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Paso 2: Tipo de vehículo */}
+                {/* Paso 1: Tipo de vehículo (permite adaptar el catálogo de inmediato) */}
                 <div>
                   <span className="block text-xs font-semibold text-slate-700 mb-1">
-                    2. Tipo de vehículo
+                    1. Tipo de vehículo
                   </span>
                   <div
                     role="group"
@@ -253,7 +250,7 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
                       <button
                         key={tipo}
                         type="button"
-                        onClick={() => setTipoVehiculo(tipo)}
+                        onClick={() => seleccionarTipoVehiculo(tipo)}
                         className={`px-2.5 py-2 text-xs font-semibold rounded-md transition-colors whitespace-nowrap truncate cursor-pointer ${
                           tipoVehiculo === tipo
                             ? 'bg-[#FF5500] text-white shadow-2xs'
@@ -264,6 +261,35 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
                       </button>
                     ))}
                   </div>
+                </div>
+
+                {/* Paso 2: Servicio requerido (restringido automáticamente para Carro / Camioneta) */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label
+                      htmlFor="triage-servicio"
+                      className="block text-xs font-semibold text-slate-700"
+                    >
+                      2. ¿Qué necesitas hoy?
+                    </label>
+                    {esCarroOCamioneta && (
+                      <span className="text-[11px] font-medium text-[#FF5500]">
+                        Servicios disponibles para Carro
+                      </span>
+                    )}
+                  </div>
+                  <select
+                    id="triage-servicio"
+                    value={servicioSeleccionadoId}
+                    onChange={(e) => onSelectServicio(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-sm font-medium text-slate-900 focus:outline-none focus:border-[#FF5500]"
+                  >
+                    {serviciosDisponibles.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.numero}. {s.tituloCorto} — ({s.etiquetaCategoria})
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Paso 3: Municipio y Barrio con botón 'Usar mi ubicación actual' */}

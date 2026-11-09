@@ -294,7 +294,13 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
                   onChange={(e) => setForm({ ...form, servicioId: e.target.value })}
                   className="w-full px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-sm text-slate-900 focus:outline-none focus:border-[#FF5500]"
                 >
-                  {SERVICIOS_16.map((s) => (
+                  {(form.tipoVehiculo === 'Carro / Camioneta'
+                    ? SERVICIOS_16.filter(
+                        (s) =>
+                          s.id === 'montallantas-carros-y-motos' || s.id === 'reinicio-de-bateria'
+                      )
+                    : SERVICIOS_16
+                  ).map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.numero}. {s.tituloCorto}
                     </option>
