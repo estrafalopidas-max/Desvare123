@@ -262,6 +262,17 @@ export function construirSchemaJsonLd(
   };
 }
 
+/**
+ * Serializa de forma segura objetos JSON-LD para incrustarlos dentro de <script type="application/ld+json">,
+ * escapando caracteres HTML sensibles (<, >, &) para impedir rupturas de etiqueta </script> (XSS).
+ */
+export function serializarJsonLdSeguro(datos: unknown): string {
+  return JSON.stringify(datos)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026');
+}
+
 export interface AtributosImagenOptimizada {
   webpSrc: string;
   webpSrcSet: string;
@@ -278,24 +289,16 @@ export interface AtributosImagenOptimizada {
  */
 export function obtenerAtributosImagenOptimizada(
   rutaImagen: string,
-  opciones?: { esPrioritaria?: boolean; esMiniaturaCatalogo?: boolean }
+  opciones?: { esPrioritaria?: boolean }
 ): AtributosImagenOptimizada {
   const esPrioritaria = Boolean(opciones?.esPrioritaria);
-  const esMiniaturaCatalogo = Boolean(opciones?.esMiniaturaCatalogo);
 
   const baseSinExtension = rutaImagen.replace(/\.(webp|jpg|jpeg|png)$/i, '');
   const webpSrc = `${baseSinExtension}.webp`;
   const fallbackJpg = `${baseSinExtension}.jpg`;
 
-  const sufijoPequeno = esMiniaturaCatalogo ? '_360w.webp 360w' : '_640w.webp 640w';
-  const anchoGrande = esMiniaturaCatalogo ? '600w' : '1280w';
-  const webpSrcSet = `${baseSinExtension}${sufijoPequeno}, ${webpSrc} ${anchoGrande}`;
-
-  const sizes = esPrioritaria
-    ? '100vw'
-    : esMiniaturaCatalogo
-      ? '(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 280px'
-      : '(max-width: 1024px) 95vw, 580px';
+  const webpSrcSet = `${baseSinExtension}_640w.webp 640w, ${webpSrc} 1280w`;
+  const sizes = esPrioritaria ? '100vw' : '(max-width: 1024px) 95vw, 580px';
 
   return {
     webpSrc,

@@ -18,19 +18,37 @@ import {
 
 const SESSION_STORAGE_KEY = 'desvares123_session_token';
 
+function generarTokenSesionUnico(): string {
+  try {
+    if (typeof window !== 'undefined' && window.crypto?.getRandomValues) {
+      const bytes = new Uint8Array(16);
+      window.crypto.getRandomValues(bytes);
+      const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+      return `s123_${hex}_${Date.now().toString(36)}`;
+    }
+  } catch {
+    // Continúa a generador alfanumérico aleatorio por instancia
+  }
+  return (
+    's123_' +
+    Math.random().toString(36).substring(2, 12) +
+    Math.random().toString(36).substring(2, 12) +
+    '_' +
+    Date.now().toString(36)
+  );
+}
+
 function obtenerOCrearTokenSesion(): string {
+  const nuevoToken = generarTokenSesionUnico();
   try {
     const guardado = window.localStorage.getItem(SESSION_STORAGE_KEY);
-    if (guardado && guardado.length >= 16) return guardado;
-    const nuevo =
-      's123_' +
-      Math.random().toString(36).substring(2, 12) +
-      '_' +
-      Date.now().toString(36);
-    window.localStorage.setItem(SESSION_STORAGE_KEY, nuevo);
-    return nuevo;
+    if (guardado && guardado.length >= 16 && /^[a-zA-Z0-9_-]+$/.test(guardado)) {
+      return guardado;
+    }
+    window.localStorage.setItem(SESSION_STORAGE_KEY, nuevoToken);
+    return nuevoToken;
   } catch {
-    return 's123_fallback_session_token_2026';
+    return nuevoToken;
   }
 }
 
@@ -96,6 +114,9 @@ export default function App() {
 
     const ogDesc = document.querySelector('meta[property="og:description"]');
     if (ogDesc) ogDesc.setAttribute('content', meta.description);
+
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) ogUrl.setAttribute('content', meta.canonical);
 
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) canonical.setAttribute('href', meta.canonical);

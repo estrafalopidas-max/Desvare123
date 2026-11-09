@@ -45,6 +45,7 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
   const [tipoVehiculo, setTipoVehiculo] = useState<'Moto' | 'Scooter' | 'Carro / Camioneta'>('Moto');
   const [referenciaVehiculo, setReferenciaVehiculo] = useState('');
   const [imgError, setImgError] = useState(false);
+  const [videoError, setVideoError] = useState(false);
   const [obteniendoGps, setObteniendoGps] = useState(false);
 
   const usarUbicacionActualGps = () => {
@@ -100,7 +101,7 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
       id="asistencia-inmediata"
       className="relative overflow-hidden border-b border-slate-200 bg-slate-900"
     >
-      {/* Fotografía de Banner Completo (Full-Bleed) en formato WebP con Scrim Medido */}
+      {/* Video y Fotografía Base de Banner Completo (Full-Bleed) con Poster WebP Instantáneo y Scrim Medido */}
       <div className="absolute inset-0 z-0">
         {!imgError ? (
           <picture className="block w-full h-full">
@@ -124,7 +125,24 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
         )}
-        {/* Scrim de contraste graduado: denso a la izquierda para lectura AA, más translúcido al centro/derecha para lucir la unidad móvil */}
+
+        {!videoError && (
+          <video
+            data-testid="hero-background-video"
+            src={BRAND_CONFIG.imagenes.videoHero}
+            poster={imgHeroAttrs.webpSrc}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            onError={() => setVideoError(true)}
+            aria-label="Video de mecánico de motos y unidad móvil Desvares 123 en atención nocturna"
+            className="hidden md:block absolute inset-0 w-full h-full object-cover object-center"
+          />
+        )}
+
+        {/* Scrim de contraste graduado: denso a la izquierda para lectura AA, más translúcido al centro/derecha para lucir el video en vivo */}
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-slate-950/35" />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-slate-950/20" />
       </div>
@@ -151,7 +169,7 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
               ¿La moto no prende, batería descargada o llanta pinchada en carro o moto? Llegamos
               donde estés. Expertos en{' '}
               <strong className="text-white font-semibold">
-                Inyección Electrónica (FI), Scooters, Escáner, Motores y Colisión
+                full inyección, Scooters, Escáner, Motores y Colisión
               </strong>.
             </p>
 

@@ -14,6 +14,7 @@ export const BRAND_CONFIG = {
   horarioTexto: 'Atención de emergencias viales 24/7 · Taller especializado Lun–Sáb 7:00 AM – 7:00 PM',
   imagenes: {
     hero: '/images/hero_motorcycle_rescue_1794237578669.webp',
+    videoHero: '/assets/aistudio/Mechanic_adjusting_motorcycle_en__1ad13d63_1080p_4f441d2f.mp4',
     montallantas: '/images/service_montallantas_movil_1794237580192.webp',
     inyeccionScanner: '/images/service_full_inyeccion_scanner_1794237581858.webp',
     scooterExpert: '/images/service_scooter_cvt_expert_1794237582169.webp',
@@ -38,12 +39,11 @@ export interface ServicioItem {
   descripcion: string;
   sintomasClave: string[];
   mensajeBaseWhatsapp: string;
-  imagenUrl: string;
 }
 
 /**
  * Los 16 servicios exactos solicitados por el cliente, estructurados con densidad semántica SEO
- * y activos visuales WebP optimizados para carga diferida (lazy loading) en redes móviles inestables.
+ * para indexación local y despacho inmediato por WhatsApp.
  */
 export const SERVICIOS_16: ServicioItem[] = [
   {
@@ -59,7 +59,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Diagnóstico inmediato de chispa, bujía, compresión, bomba de gasolina, fusibles y encendido eléctrico donde te hayas quedado varado.',
     sintomasClave: ['Sin chispa', 'Ahogada', 'Falla eléctrica', 'Bomba gasolina'],
     mensajeBaseWhatsapp: 'Urgencia: Mi moto no prende y necesito asistencia en sitio',
-    imagenUrl: '/images/servicios/la-moto-no-prende.webp',
   },
   {
     id: 'montallantas-carros-y-motos',
@@ -74,7 +73,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Despinche móvil para motos, carros y camionetas. Reparación sellomatic, vulcanizado, cambio de neumático o válvula sin rayar el rin.',
     sintomasClave: ['Despinche Carro', 'Moto Sellomatic', 'Neumático', 'Válvula'],
     mensajeBaseWhatsapp: 'Urgencia Montallantas: Necesito despinche a domicilio (Carro / Moto)',
-    imagenUrl: '/images/servicios/montallantas-carros-y-motos.webp',
   },
   {
     id: 'reinicio-de-bateria',
@@ -89,7 +87,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Iniciador de alto amperaje para carros y motos. Medimos con multímetro batería, regulador y planta (estator) o instalamos batería nueva.',
     sintomasClave: ['Batería descargada', 'Reinicio 12V', 'Estator y regulador'],
     mensajeBaseWhatsapp: 'Urgencia Batería: Necesito reinicio o revisión de batería a domicilio',
-    imagenUrl: '/images/servicios/reinicio-de-bateria.webp',
   },
   {
     id: 'cambio-de-guayas',
@@ -104,7 +101,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Reemplazo inmediato de guaya de clutch (embrague) o acelerador reventada con lubricación y graduación exacta de tensión.',
     sintomasClave: ['Guaya de clutch', 'Guaya acelerador', 'Graduación embrague'],
     mensajeBaseWhatsapp: 'Urgencia Guayas: Se me reventó la guaya (clutch/acelerador) y necesito cambio en sitio',
-    imagenUrl: '/images/servicios/cambio-de-guayas.webp',
   },
   {
     id: 'experto-mecanica-motos',
@@ -119,7 +115,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Solución profesional a ruidos internos, pérdida de fuerza, fugas de aceite, frenos, rodamientos y puesta a punto multimarca.',
     sintomasClave: ['Frenos', 'Fugas de aceite', 'Pérdida de fuerza', 'Ajuste motor'],
     mensajeBaseWhatsapp: 'Necesito un experto en mecánica de motos para diagnóstico y reparación',
-    imagenUrl: '/images/servicios/experto-mecanica-motos.webp',
   },
   {
     id: 'full-inyeccion',
@@ -135,7 +130,6 @@ export const SERVICIOS_16: ServicioItem[] = [
     sintomasClave: ['Fuel Injection FI', 'Inyectores ultrasonido', 'Cuerpo aceleración'],
     mensajeBaseWhatsapp:
       'Solicito servicio especializado de Inyección Electrónica / Full Inyección (FI) para mi moto',
-    imagenUrl: '/images/servicios/full-inyeccion.webp',
   },
   {
     id: 'scaner-motos',
@@ -150,7 +144,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Diagnóstico computarizado OBD2 multimarca para lectura de códigos de falla, borrado de testigo Check Engine / FI / ABS y reseteo ECU.',
     sintomasClave: ['Testigo FI', 'Check Engine', 'Frenos ABS', 'Códigos ECU'],
     mensajeBaseWhatsapp: 'Mi moto tiene el testigo FI / Check encendido, necesito diagnóstico con Escáner',
-    imagenUrl: '/images/servicios/scaner-motos.webp',
   },
   {
     id: 'experto-motos-scooter',
@@ -165,7 +158,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Especialistas en transmisión automática CVT (NMAX, PCX, BWS, Agility, Victory): correa de transmisión, variador, dados y centrífugo.',
     sintomasClave: ['Correa CVT', 'Dados y variador', 'NMAX · BWS · Agility'],
     mensajeBaseWhatsapp: 'Tengo una moto Scooter y necesito servicio con el técnico experto en Scooters',
-    imagenUrl: '/images/servicios/experto-motos-scooter.webp',
   },
   {
     id: 'cambio-de-aceite',
@@ -180,7 +172,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Suministro y cambio de aceite sintético, semisintético y 4T (Motul, Liqui Moly, Yamalube, Mobil) + filtro original sin filas.',
     sintomasClave: ['Sintético y Semi', 'Filtro original', 'Aceite caja scooter'],
     mensajeBaseWhatsapp: 'Quiero agendar un cambio de aceite y filtro a domicilio para mi moto',
-    imagenUrl: '/images/servicios/cambio-de-aceite.webp',
   },
   {
     id: 'kit-de-arrastre',
@@ -195,7 +186,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Venta e instalación de cadena reforzada u O-Ring, sproket y piñón de salida con alineación, tensado técnico y lubricación.',
     sintomasClave: ['Cadena O-Ring', 'Sproket y piñón', 'Tensado técnico'],
     mensajeBaseWhatsapp: 'Necesito cotizar o instalar Kit de Arrastre a domicilio para mi moto',
-    imagenUrl: '/images/servicios/kit-de-arrastre.webp',
   },
   {
     id: 'mantenimiento-preventivo',
@@ -210,7 +200,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Alistamiento para tecnomecánica y viajes: pastillas y líquido de frenos DOT4, calibración de válvulas, filtro de aire, bujía y luces.',
     sintomasClave: ['Tecnomecánica', 'Pastillas freno', 'Calibración válvulas'],
     mensajeBaseWhatsapp: 'Quiero programar un Mantenimiento Preventivo para mi moto',
-    imagenUrl: '/images/servicios/mantenimiento-preventivo.webp',
   },
   {
     id: 'mantenimiento-general',
@@ -225,7 +214,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Engrase general de chasis, cunas de dirección, retenedores y aceite hidráulico de barras, tijera, rodamientos e inyección.',
     sintomasClave: ['Cunas dirección', 'Barras y suspensión', 'Engrase chasis'],
     mensajeBaseWhatsapp: 'Quiero cotizar un Mantenimiento General completo para mi moto',
-    imagenUrl: '/images/servicios/mantenimiento-general.webp',
   },
   {
     id: 'reparacion-de-motores',
@@ -240,7 +228,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Reparación integral de cilindro, pistón, anillos, cabezote, válvulas, cadenilla, biela, cigüeñal, discos de clutch y caja de cambios.',
     sintomasClave: ['Humo o consumo aceite', 'Cilindro y biela', 'Clutch y caja'],
     mensajeBaseWhatsapp: 'Necesito diagnóstico y cotización para Reparación de Motor de mi moto',
-    imagenUrl: '/images/servicios/reparacion-de-motores.webp',
   },
   {
     id: 'colision-y-siniestros',
@@ -255,7 +242,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Recuperación de motos chocadas: enderezado hidráulico de chasis, barras, espigo y rines, pintura original, carenajes y cotización.',
     sintomasClave: ['Enderezado chasis', 'Barras y rines', 'Carenajes y pintura'],
     mensajeBaseWhatsapp: 'Tuve una colisión/caída y necesito evaluar la reparación de mi moto',
-    imagenUrl: '/images/servicios/colision-y-siniestros.webp',
   },
   {
     id: 'venta-de-repuestos',
@@ -270,7 +256,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Baterías, llantas, neumáticos, pastillas de freno, kits de arrastre, guayas, bujías, reguladores, bobinas y repuestos de motor.',
     sintomasClave: ['Baterías y llantas', 'Frenos y guayas', 'Partes eléctricas'],
     mensajeBaseWhatsapp: 'Necesito cotizar un repuesto con instalación a domicilio',
-    imagenUrl: '/images/servicios/venta-de-repuestos.webp',
   },
   {
     id: 'todas-las-marcas-de-motos',
@@ -285,7 +270,6 @@ export const SERVICIOS_16: ServicioItem[] = [
       'Atención con herramienta especializada para Yamaha, Honda, Suzuki, Bajaj, AKT, Victory, Auteco, KTM, Kawasaki, Hero, Kymco, SYM y BMW.',
     sintomasClave: ['Yamaha · Honda · Suzuki', 'Bajaj · AKT · Victory', 'KTM · Kymco · BMW'],
     mensajeBaseWhatsapp: 'Consulta de servicio técnico multimarca para mi motocicleta',
-    imagenUrl: '/images/servicios/todas-las-marcas-de-motos.webp',
   },
 ];
 

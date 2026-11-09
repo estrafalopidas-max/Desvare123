@@ -6,6 +6,7 @@ import {
   validarSolicitudDespacho,
   obtenerMetadatosPorRuta,
   construirSchemaJsonLd,
+  serializarJsonLdSeguro,
   obtenerAtributosImagenOptimizada,
   construirPayloadConversionGA4,
   resolverUbicacionGpsAburra,
@@ -43,7 +44,7 @@ test('construirPayloadConversionGA4 estructura el evento personalizado solicitar
   assert.equal(evento.eventParams.value, 1);
 });
 
-test('Catálogo contiene exactamente los 16 servicios solicitados por el cliente con imágenes WebP únicas', () => {
+test('Catálogo contiene exactamente los 16 servicios solicitados por el cliente sin propiedades obsoletas', () => {
   assert.equal(SERVICIOS_16.length, 16);
   const ids = SERVICIOS_16.map((s) => s.id);
   assert.ok(ids.includes('la-moto-no-prende'));
@@ -54,24 +55,17 @@ test('Catálogo contiene exactamente los 16 servicios solicitados por el cliente
   assert.ok(ids.includes('colision-y-siniestros'));
   assert.ok(ids.includes('reparacion-de-motores'));
 
-  const urlsWebp = new Set(SERVICIOS_16.map((s) => s.imagenUrl));
-  assert.equal(urlsWebp.size, 16, 'Cada uno de los 16 servicios debe tener su propia imagen WebP única');
-  for (const s of SERVICIOS_16) {
-    assert.ok(s.imagenUrl.endsWith('.webp'));
-  }
+  const numerosUnicos = new Set(SERVICIOS_16.map((s) => s.numero));
+  assert.equal(numerosUnicos.size, 16);
 });
 
-test('obtenerAtributosImagenOptimizada configura lazy loading, async decoding y srcSet WebP responsivo', () => {
-  const attrsCatalogo = obtenerAtributosImagenOptimizada(
-    '/images/servicios/la-moto-no-prende.webp',
-    { esMiniaturaCatalogo: true }
-  );
-  assert.equal(attrsCatalogo.loading, 'lazy');
-  assert.equal(attrsCatalogo.decoding, 'async');
-  assert.equal(attrsCatalogo.fetchPriority, 'low');
-  assert.ok(attrsCatalogo.webpSrcSet.includes('_360w.webp 360w'));
-  assert.ok(attrsCatalogo.webpSrcSet.includes('.webp 600w'));
-  assert.equal(attrsCatalogo.fallbackJpg, '/images/servicios/la-moto-no-prende.jpg');
+test('obtenerAtributosImagenOptimizada y serializarJsonLdSeguro aplican optimización WebP y escape XSS', () => {
+  const attrsBento = obtenerAtributosImagenOptimizada(BRAND_CONFIG.imagenes.montallantas);
+  assert.equal(attrsBento.loading, 'lazy');
+  assert.equal(attrsBento.decoding, 'async');
+  assert.equal(attrsBento.fetchPriority, 'low');
+  assert.ok(attrsBento.webpSrcSet.includes('_640w.webp 640w'));
+  assert.ok(attrsBento.webpSrcSet.includes('.webp 1280w'));
 
   const attrsHero = obtenerAtributosImagenOptimizada(BRAND_CONFIG.imagenes.hero, {
     esPrioritaria: true,
@@ -79,6 +73,10 @@ test('obtenerAtributosImagenOptimizada configura lazy loading, async decoding y 
   assert.equal(attrsHero.loading, 'eager');
   assert.equal(attrsHero.fetchPriority, 'high');
   assert.ok(attrsHero.webpSrcSet.includes('_640w.webp 640w'));
+
+  const jsonEscapado = serializarJsonLdSeguro({ prueba: '</script><script>alert(1)</script>' });
+  assert.ok(!jsonEscapado.includes('</script>'));
+  assert.ok(jsonEscapado.includes('\\u003c/script\\u003e'));
 });
 
 test('construirTriageWhatsapp incluye el número +57 300 1899288 y cotización gratis sin barrera de cobro previo', () => {
