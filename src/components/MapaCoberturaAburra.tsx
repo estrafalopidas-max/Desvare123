@@ -124,7 +124,7 @@ export const MapaCoberturaAburra: React.FC<MapaCoberturaAburraProps> = ({
           <div className="flex items-center gap-2 text-xs font-bold text-[#FF5500]">
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-400" aria-hidden="true" />
             <span>
-              Mapa de Cobertura en Vivo · {totalUnidades} Unidades Móviles en el Valle de Aburrá
+              Mapa de cobertura en vivo · {totalUnidades} unidades móviles en el Valle de Aburrá
             </span>
           </div>
           <p className="text-xs text-slate-300">

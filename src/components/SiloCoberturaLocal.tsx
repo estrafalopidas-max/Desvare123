@@ -27,7 +27,7 @@ export const SiloCoberturaLocal: React.FC<SiloCoberturaLocalProps> = ({
       <div className="max-w-[1280px] mx-auto px-4 sm:px-8 space-y-6">
         <div className="max-w-3xl space-y-2">
           <p className="text-xs sm:text-sm font-bold text-[#FF5500] tracking-wide">
-            04. Cobertura Hiper-Local por Municipio y Barrio
+            04. Cobertura hiperlocal por municipio y barrio
           </p>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900">
             Unidades en Itagüí, Sabaneta, Envigado, La Estrella y Medellín
@@ -78,7 +78,7 @@ export const SiloCoberturaLocal: React.FC<SiloCoberturaLocalProps> = ({
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors whitespace-nowrap"
               >
-                <span>Pedir Mecánico en {zonaActiva.nombre}</span>
+                <span>Pedir mecánico en {zonaActiva.nombre}</span>
                 <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
               </a>
             </div>

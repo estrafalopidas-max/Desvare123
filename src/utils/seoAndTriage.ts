@@ -26,7 +26,7 @@ export interface ResultadoTriage {
 
 /**
  * Construye el mensaje de triage operativo con Cotización y Asesoría GRATIS
- * y genera la URL oficial de WhatsApp hacia +57 300 1899288.
+ * y genera la URL oficial de WhatsApp hacia +57 300 603 6253.
  */
 export function construirTriageWhatsapp(params: ParametrosTriage): ResultadoTriage {
   const servicio =
@@ -169,7 +169,7 @@ export function obtenerMetadatosPorRuta(
 
   return {
     title:
-      'Desvares 123 – Mecánico de Motos y Montallantas a Domicilio en Itagüí, Sabaneta, Envigado y Medellín',
+      'Desvares 123 – Mecánico de motos y montallantas a domicilio en Itagüí, Sabaneta, Envigado y Medellín',
     description:
       '¿Tu moto no prende o te pinchaste? Mecánico de motos a domicilio y montallantas para carros y motos en Itagüí, Sabaneta, Envigado, La Estrella y Medellín. Cotización gratis y llegada en 25 min.',
     canonical: `${cleanBase}/`,
@@ -195,8 +195,8 @@ export function construirSchemaJsonLd(
         '@type': ['AutoRepair', 'MotorcycleRepair', 'EmergencyService', 'LocalBusiness'],
         '@id': `${cleanBase}/#organization`,
         name: zona
-          ? `${BRAND_CONFIG.nombre} – Mecánico de Motos y Montallantas en ${zona.nombre}`
-          : `${BRAND_CONFIG.nombre} – Mecánico de Motos y Montallantas a Domicilio`,
+          ? `${BRAND_CONFIG.nombre} – Mecánico de motos y montallantas en ${zona.nombre}`
+          : `${BRAND_CONFIG.nombre} – Mecánico de motos y montallantas a domicilio`,
         url: zona ? `${cleanBase}/zona/${zona.slug}` : cleanBase,
         telephone: BRAND_CONFIG.telefonoE164,
         priceRange: '$$',
@@ -231,7 +231,7 @@ export function construirSchemaJsonLd(
         ],
         hasOfferCatalog: {
           '@type': 'OfferCatalog',
-          name: 'Catálogo de 16 Servicios de Mecánica de Motos y Montallantas a Domicilio',
+          name: 'Catálogo de 16 servicios de mecánica de motos y montallantas a domicilio',
           itemListElement: SERVICIOS_16.map((s, idx) => ({
             '@type': 'Offer',
             position: idx + 1,
@@ -327,8 +327,8 @@ export function construirPayloadConversionGA4(params?: ParametrosConversionGA4) 
     eventName: 'solicitar_rescate_ahora' as const,
     eventParams: {
       event_category: 'conversion_rescate',
-      event_label: 'Solicitar Rescate Ahora',
-      button_text: 'Solicitar Rescate Ahora',
+      event_label: 'Solicitar rescate ahora',
+      button_text: 'Solicitar rescate ahora',
       ubicacion_boton: params?.ubicacionBoton || 'navbar_principal',
       servicio_id: params?.servicioId || 'la-moto-no-prende',
       municipio_zona: params?.zonaSlug || 'itagui',

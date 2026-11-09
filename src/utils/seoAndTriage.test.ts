@@ -38,7 +38,7 @@ test('construirPayloadConversionGA4 estructura el evento personalizado solicitar
 
   assert.equal(evento.eventName, 'solicitar_rescate_ahora');
   assert.equal(evento.eventParams.event_category, 'conversion_rescate');
-  assert.equal(evento.eventParams.button_text, 'Solicitar Rescate Ahora');
+  assert.equal(evento.eventParams.button_text, 'Solicitar rescate ahora');
   assert.equal(evento.eventParams.ubicacion_boton, 'navbar_superior');
   assert.equal(evento.eventParams.currency, 'COP');
   assert.equal(evento.eventParams.value, 1);
@@ -79,7 +79,7 @@ test('obtenerAtributosImagenOptimizada y serializarJsonLdSeguro aplican optimiza
   assert.ok(jsonEscapado.includes('\\u003c/script\\u003e'));
 });
 
-test('construirTriageWhatsapp incluye el número +57 300 1899288 y cotización gratis sin barrera de cobro previo', () => {
+test('construirTriageWhatsapp incluye el número +57 300 603 6253 y cotización gratis sin barrera de cobro previo', () => {
   const resultado = construirTriageWhatsapp({
     servicioId: 'montallantas-carros-y-motos',
     zonaSlug: 'sabaneta',

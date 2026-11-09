@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, CheckCircle2, MessageSquare, AlertCircle } from 'lucide-react';
+import { X, CheckCircle2, MessageSquare, AlertCircle, Wrench, MapPin, ChevronDown } from 'lucide-react';
 import {
   BRAND_CONFIG,
   SERVICIOS_16,
@@ -150,21 +150,28 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-despacho-titulo"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-950/80 backdrop-blur-xs"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          setOrdenConfirmada(null);
+          onCerrar();
+        }
+      }}
     >
-      <div className="relative w-full max-w-xl rounded-xl bg-white border border-slate-200 shadow-2xl p-6 sm:p-7 text-slate-900 my-8">
-        <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-200">
+      <div className="relative w-full max-w-xl max-h-[calc(100dvh-1.25rem)] sm:max-h-[90vh] flex flex-col rounded-2xl bg-white border border-slate-200 shadow-2xl p-4 sm:p-6 text-slate-900">
+        {/* Cabecera SIEMPRE visible en la parte superior sin cortarse jamás */}
+        <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-200 shrink-0">
           <div>
-            <p className="text-xs font-bold text-[#FF5500]">
+            <p className="text-[11px] sm:text-xs font-bold text-[#FF5500]">
               Desvares 123 · Línea Directa {BRAND_CONFIG.telefonoDisplay}
             </p>
             <h2
               id="modal-despacho-titulo"
-              className="font-display text-2xl sm:text-3xl font-bold text-slate-900 mt-0.5"
+              className="font-display text-lg sm:text-2xl font-bold text-slate-900 mt-0.5 leading-snug"
             >
               {ordenConfirmada
-                ? `Solicitud Registrada #${ordenConfirmada.codigoOrden}`
-                : 'Solicitar Mecánico a Domicilio o Cotización'}
+                ? `Solicitud registrada #${ordenConfirmada.codigoOrden}`
+                : 'Solicitar mecánico a domicilio'}
             </h2>
           </div>
           <button
@@ -174,11 +181,14 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
               onCerrar();
             }}
             aria-label="Cerrar ventana de solicitud de servicio"
-            className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
           >
             <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
+
+        {/* Contenido scrolleable con min-h-0 obligatorio para flexbox */}
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain pt-3 pb-1 pr-1">
 
         {ordenConfirmada ? (
           <div className="py-5 space-y-5">
@@ -214,7 +224,7 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
                 className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors"
               >
                 <MessageSquare className="w-4 h-4 shrink-0" aria-hidden="true" />
-                <span>Confirmar Ubicación GPS por WhatsApp</span>
+                <span>Confirmar ubicación GPS por WhatsApp</span>
               </a>
 
               <button
@@ -284,49 +294,65 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
               <div>
                 <label
                   htmlFor="orden-servicio"
-                  className="block text-xs font-semibold text-slate-700 mb-1"
+                  className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5"
                 >
                   Servicio requerido *
                 </label>
-                <select
-                  id="orden-servicio"
-                  value={form.servicioId}
-                  onChange={(e) => setForm({ ...form, servicioId: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-sm text-slate-900 focus:outline-none focus:border-[#FF5500]"
-                >
-                  {(form.tipoVehiculo === 'Carro / Camioneta'
-                    ? SERVICIOS_16.filter(
-                        (s) =>
-                          s.id === 'montallantas-carros-y-motos' || s.id === 'reinicio-de-bateria'
-                      )
-                    : SERVICIOS_16
-                  ).map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.numero}. {s.tituloCorto}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative group">
+                  <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-[#FF5500] transition-colors">
+                    <Wrench className="w-4 h-4" aria-hidden="true" />
+                  </div>
+                  <select
+                    id="orden-servicio"
+                    value={form.servicioId}
+                    onChange={(e) => setForm({ ...form, servicioId: e.target.value })}
+                    className="w-full appearance-none pl-10 pr-10 py-2.5 rounded-xl bg-slate-50/90 hover:bg-white focus:bg-white border border-slate-300 hover:border-slate-400 focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/20 text-sm font-semibold text-slate-900 transition-all cursor-pointer shadow-2xs outline-none"
+                  >
+                    {(form.tipoVehiculo === 'Carro / Camioneta'
+                      ? SERVICIOS_16.filter(
+                          (s) =>
+                            s.id === 'montallantas-carros-y-motos' || s.id === 'reinicio-de-bateria'
+                        )
+                      : SERVICIOS_16
+                    ).map((s) => (
+                      <option key={s.id} value={s.id} className="py-2 text-slate-900 font-medium bg-white">
+                        {s.numero}. {s.tituloCorto}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center w-6 h-6 rounded-md bg-slate-200/70 group-hover:bg-[#FF5500] text-slate-600 group-hover:text-white transition-colors">
+                    <ChevronDown className="w-3.5 h-3.5 stroke-[2.5]" aria-hidden="true" />
+                  </div>
+                </div>
               </div>
 
               <div>
                 <label
                   htmlFor="orden-zona"
-                  className="block text-xs font-semibold text-slate-700 mb-1"
+                  className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5"
                 >
                   Municipio *
                 </label>
-                <select
-                  id="orden-zona"
-                  value={form.zonaSlug}
-                  onChange={(e) => setForm({ ...form, zonaSlug: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-sm text-slate-900 focus:outline-none focus:border-[#FF5500]"
-                >
-                  {ZONAS_COBERTURA.map((z) => (
-                    <option key={z.slug} value={z.slug}>
-                      {z.nombre} ({z.tiempoArribo})
-                    </option>
-                  ))}
-                </select>
+                <div className="relative group">
+                  <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-[#FF5500] transition-colors">
+                    <MapPin className="w-4 h-4" aria-hidden="true" />
+                  </div>
+                  <select
+                    id="orden-zona"
+                    value={form.zonaSlug}
+                    onChange={(e) => setForm({ ...form, zonaSlug: e.target.value })}
+                    className="w-full appearance-none pl-10 pr-10 py-2.5 rounded-xl bg-slate-50/90 hover:bg-white focus:bg-white border border-slate-300 hover:border-slate-400 focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/20 text-sm font-semibold text-slate-900 transition-all cursor-pointer shadow-2xs outline-none"
+                  >
+                    {ZONAS_COBERTURA.map((z) => (
+                      <option key={z.slug} value={z.slug} className="py-2 text-slate-900 font-medium bg-white">
+                        {z.nombre} ({z.tiempoArribo})
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center w-6 h-6 rounded-md bg-slate-200/70 group-hover:bg-[#FF5500] text-slate-600 group-hover:text-white transition-colors">
+                    <ChevronDown className="w-3.5 h-3.5 stroke-[2.5]" aria-hidden="true" />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -399,7 +425,7 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
                 disabled={enviando}
                 className="w-full sm:flex-1 px-5 py-3 text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] disabled:opacity-50 rounded-lg transition-colors cursor-pointer"
               >
-                {enviando ? 'Enviando solicitud...' : 'Confirmar Solicitud de Servicio'}
+                {enviando ? 'Enviando solicitud...' : 'Confirmar solicitud de servicio'}
               </button>
 
               <a
@@ -414,6 +440,7 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
             </div>
           </form>
         )}
+        </div>
       </div>
     </div>
   );

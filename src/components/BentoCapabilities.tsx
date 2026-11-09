@@ -24,54 +24,54 @@ const TARJETAS_BENTO: TarjetaEspecialidad[] = [
   {
     id: 'bento-montallantas',
     servicioId: 'montallantas-carros-y-motos',
-    indice: '01. Asistencia Vial Mixta',
-    titulo: 'Montallantas Carros y Motos + Reinicio de Batería',
-    subtituloMetadatos: 'Sellomatic y Neumático · Despinche en Vía · Iniciador 12V',
+    indice: '01. Asistencia vial mixta',
+    titulo: 'Montallantas carros y motos + reinicio de batería',
+    subtituloMetadatos: 'Sellomatic y neumático · Despinche en vía · Iniciador 12V',
     descripcion:
       'Atendemos automóviles, camionetas y motos pinchados o sin batería en vía, casa o centro comercial sin rayar el rin.',
     evidenciaCuantitativa: 'Llegada promedio en 22 min por Av. El Poblado, Las Vegas y Autopista Sur.',
     imagenUrl: BRAND_CONFIG.imagenes.montallantas,
     colSpanClass: 'lg:col-span-7',
-    ctaTexto: 'Solicitar Montallantas / Batería',
+    ctaTexto: 'Solicitar montallantas / batería',
   },
   {
     id: 'bento-inyeccion',
     servicioId: 'full-inyeccion',
-    indice: '02. Diagnóstico Computarizado',
-    titulo: 'Inyección Electrónica (Full Inyección FI) y Escáner',
-    subtituloMetadatos: 'Fuel Injection OBD2 · Ultrasonido · Cuerpo de Aceleración',
+    indice: '02. Diagnóstico computarizado',
+    titulo: 'Inyección electrónica (Full Inyección FI) y escáner',
+    subtituloMetadatos: 'Fuel Injection OBD2 · Ultrasonido · Cuerpo de aceleración',
     descripcion:
       'Diagnosticamos sistemas Fuel Injection con escáner real antes de cambiar repuestos. Solución a testigos FI/ABS, pérdida de potencia y sensores.',
     evidenciaCuantitativa: '98% de efectividad en detección de fallas eléctricas en primera visita.',
     imagenUrl: BRAND_CONFIG.imagenes.inyeccionScanner,
     colSpanClass: 'lg:col-span-5',
-    ctaTexto: 'Agendar Escáner / FI',
+    ctaTexto: 'Agendar escáner / FI',
   },
   {
     id: 'bento-scooter',
     servicioId: 'experto-motos-scooter',
-    indice: '03. Transmisión CVT y Preventivo',
-    titulo: 'Experto en Scooters, Kit de Arrastre y Aceite',
-    subtituloMetadatos: 'Variador y Correa CVT · Guayas · Frenos DOT4',
+    indice: '03. Transmisión CVT y preventivo',
+    titulo: 'Experto en scooters, kit de arrastre y aceite',
+    subtituloMetadatos: 'Variador y correa CVT · Guayas · Frenos DOT4',
     descripcion:
       'Especialistas en NMAX, PCX, BWS, Agility y Victory, más instalación de kit de arrastre, guayas y cambio de aceite a domicilio.',
     evidenciaCuantitativa: 'Stock móvil de correas originales, dados, guayas, pastillas y lubricantes.',
     imagenUrl: BRAND_CONFIG.imagenes.scooterExpert,
     colSpanClass: 'lg:col-span-5',
-    ctaTexto: 'Solicitar Experto en Scooters',
+    ctaTexto: 'Solicitar experto en scooters',
   },
   {
     id: 'bento-motor-colision',
     servicioId: 'reparacion-de-motores',
-    indice: '04. Taller Mayor y Siniestros',
-    titulo: 'Reparación de Motores (2T/4T), Colisión y Repuestos',
-    subtituloMetadatos: 'Recogida Segura a Domicilio · Chasis y Barras · Garantía Escrita',
+    indice: '04. Taller mayor y siniestros',
+    titulo: 'Reparación de motores (2T/4T), colisión y repuestos',
+    subtituloMetadatos: 'Recogida segura a domicilio · Chasis y barras · Garantía escrita',
     descripcion:
       'Recogemos tu moto a domicilio para reparación de motor, cilindro, biela, caja de cambios o reconstrucción integral por choque.',
     evidenciaCuantitativa: 'Garantía escrita de 3 a 6 meses en motores y enderezado estructural.',
     imagenUrl: BRAND_CONFIG.imagenes.motorColision,
     colSpanClass: 'lg:col-span-7',
-    ctaTexto: 'Cotizar Motor o Colisión',
+    ctaTexto: 'Cotizar motor o colisión',
   },
 ];
 
@@ -88,10 +88,10 @@ export const BentoCapabilities: React.FC<BentoCapabilitiesProps> = ({
       <div className="max-w-[1280px] mx-auto px-4 sm:px-8">
         <div className="max-w-3xl mb-9 space-y-2">
           <p className="text-xs sm:text-sm font-bold text-[#FF5500] tracking-wide">
-            02. Especialidades en Sitio y Taller Mayor
+            02. Especialidades en sitio y taller mayor
           </p>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900">
-            Desde un Despinche en Vía hasta Motores y Colisión
+            Desde un despinche en vía hasta motores y colisión
           </h2>
           <p className="text-sm sm:text-base text-slate-600">
             Unidades móviles equipadas para urgencias y centro técnico especializado para

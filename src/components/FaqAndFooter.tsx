@@ -61,7 +61,7 @@ export const FaqAndFooter: React.FC<FaqAndFooterProps> = ({
                 <div className="flex items-center gap-2.5">
                   <ClipboardList className="w-5 h-5 text-[#FF5500]" aria-hidden="true" />
                   <h2 className="font-display text-2xl font-bold text-slate-900">
-                    Mis Solicitudes de Servicio Activas ({ordenesSesion.length})
+                    Mis solicitudes de servicio activas ({ordenesSesion.length})
                   </h2>
                 </div>
                 <span className="text-xs text-slate-500">
@@ -101,10 +101,10 @@ export const FaqAndFooter: React.FC<FaqAndFooterProps> = ({
         <div className="max-w-[1280px] mx-auto px-4 sm:px-8">
           <div className="max-w-3xl mb-8 space-y-2">
             <p className="text-xs sm:text-sm font-bold text-[#FF5500] tracking-wide">
-              05. Casos Reales en el Valle de Aburrá
+              05. Casos reales en el Valle de Aburrá
             </p>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900">
-              Conductores Atendidos en Itagüí, Sabaneta y Envigado
+              Conductores atendidos en Itagüí, Sabaneta y Envigado
             </h2>
           </div>
 
@@ -137,10 +137,10 @@ export const FaqAndFooter: React.FC<FaqAndFooterProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
             <div className="lg:col-span-5 space-y-3.5">
               <p className="text-xs sm:text-sm font-bold text-[#FF5500] tracking-wide">
-                06. Preguntas Frecuentes y Tarifas
+                06. Preguntas frecuentes y tarifas
               </p>
               <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-900">
-                Resolvemos tus Dudas al Instante
+                Resolvemos tus dudas al instante
               </h2>
               <p className="text-sm text-slate-600 leading-relaxed">
                 Tiempos de llegada, montallantas para carros y motos, escáner FI y recogida para
@@ -153,7 +153,7 @@ export const FaqAndFooter: React.FC<FaqAndFooterProps> = ({
                   onClick={onAbrirModalDespacho}
                   className="px-5 py-3 text-xs sm:text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors cursor-pointer"
                 >
-                  Solicitar Mecánico a Domicilio
+                  Solicitar mecánico a domicilio
                 </button>
               </div>
             </div>
@@ -235,59 +235,59 @@ export const FaqAndFooter: React.FC<FaqAndFooterProps> = ({
             </div>
 
             <div className="space-y-2.5">
-              <p className="font-semibold text-white text-sm">Urgencias en Vía</p>
+              <p className="font-semibold text-white text-sm">Urgencias en vía</p>
               <ul className="space-y-1.5">
                 <li>
                   <a href="#catalogo-16-servicios" className="hover:text-white transition-colors">
-                    La Moto No Prende — Desvare en Vía
+                    La moto no prende — Desvare en vía
                   </a>
                 </li>
                 <li>
                   <a href="#catalogo-16-servicios" className="hover:text-white transition-colors">
-                    Montallantas a Domicilio Carros y Motos
+                    Montallantas a domicilio carros y motos
                   </a>
                 </li>
                 <li>
                   <a href="#catalogo-16-servicios" className="hover:text-white transition-colors">
-                    Reinicio y Venta de Baterías a Domicilio
+                    Reinicio y venta de baterías a domicilio
                   </a>
                 </li>
                 <li>
                   <a href="#catalogo-16-servicios" className="hover:text-white transition-colors">
-                    Cambio de Guayas de Clutch y Acelerador
+                    Cambio de guayas de clutch y acelerador
                   </a>
                 </li>
               </ul>
             </div>
 
             <div className="space-y-2.5">
-              <p className="font-semibold text-white text-sm">Especialidades y Taller</p>
+              <p className="font-semibold text-white text-sm">Especialidades y taller</p>
               <ul className="space-y-1.5">
                 <li>
                   <a href="#catalogo-16-servicios" className="hover:text-white transition-colors">
-                    Inyección Electrónica (Full Inyección FI) y Escáner
+                    Inyección electrónica (Full Inyección FI) y escáner
                   </a>
                 </li>
                 <li>
                   <a href="#catalogo-16-servicios" className="hover:text-white transition-colors">
-                    Experto en Motos Scooter y Automáticas
+                    Experto en motos scooter y automáticas
                   </a>
                 </li>
                 <li>
                   <a href="#catalogo-16-servicios" className="hover:text-white transition-colors">
-                    Cambio de Aceite y Kit de Arrastre
+                    Cambio de aceite y kit de arrastre
                   </a>
                 </li>
                 <li>
                   <a href="#catalogo-16-servicios" className="hover:text-white transition-colors">
-                    Reparación de Motores, Colisión y Repuestos
+                    Reparación de motores, colisión y repuestos
                   </a>
                 </li>
               </ul>
             </div>
 
             <div className="space-y-2.5">
-              <p className="font-semibold text-white text-sm">Rutas Locales de Cobertura</p>
+              <p className="font-semibold text-white text-sm">Rutas locales de cobertura</p>
               <ul className="space-y-1.5">
                 {ZONAS_COBERTURA.map((z) => (
                   <li key={z.slug}>
@@ -302,7 +302,7 @@ export const FaqAndFooter: React.FC<FaqAndFooterProps> = ({
                       }}
                       className="hover:text-white transition-colors"
                     >
-                      Mecánico y Montallantas en {z.nombre}
+                      Mecánico y montallantas en {z.nombre}
                     </a>
                   </li>
                 ))}

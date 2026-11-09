@@ -6,9 +6,9 @@
 export const BRAND_CONFIG = {
   nombre: 'Desvares 123',
   dominio: 'https://desvares123.com',
-  telefonoDisplay: '+57 300 189 9288',
-  telefonoE164: '+573001899288',
-  whatsappNumero: '573001899288',
+  telefonoDisplay: '+57 300 603 6253',
+  telefonoE164: '+573006036253',
+  whatsappNumero: '573006036253',
   moneda: 'COP',
   tiempoPromedioMinutos: 25,
   horarioTexto: 'Atención de emergencias viales 24/7 · Taller especializado Lun–Sáb 7:00 AM – 7:00 PM',
@@ -49,10 +49,10 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'la-moto-no-prende',
     numero: '01',
-    titulo: '¿La Moto No Prende? Desvare en Sitio',
+    titulo: '¿La moto no prende? Desvare en sitio',
     tituloCorto: 'La moto no prende',
     categoria: 'urgencia_vial',
-    etiquetaCategoria: 'Urgencia Vial',
+    etiquetaCategoria: 'Urgencia vial',
     tiempoRespuesta: '20–30 min',
     modalidad: 'En vía o domicilio',
     descripcion:
@@ -63,10 +63,10 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'montallantas-carros-y-motos',
     numero: '02',
-    titulo: 'Montallantas Carros y Motos a Domicilio',
+    titulo: 'Montallantas carros y motos a domicilio',
     tituloCorto: 'Montallantas carros y motos',
     categoria: 'urgencia_vial',
-    etiquetaCategoria: 'Urgencia Vial',
+    etiquetaCategoria: 'Urgencia vial',
     tiempoRespuesta: '20–30 min',
     modalidad: 'Móvil 24/7',
     descripcion:
@@ -77,10 +77,10 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'reinicio-de-bateria',
     numero: '03',
-    titulo: 'Reinicio y Baterías a Domicilio',
+    titulo: 'Reinicio y baterías a domicilio',
     tituloCorto: 'Reinicio de batería',
     categoria: 'urgencia_vial',
-    etiquetaCategoria: 'Urgencia Vial',
+    etiquetaCategoria: 'Urgencia vial',
     tiempoRespuesta: '20–25 min',
     modalidad: 'En vía o parqueadero',
     descripcion:
@@ -91,10 +91,10 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'cambio-de-guayas',
     numero: '04',
-    titulo: 'Cambio de Guayas en Vía o Domicilio',
-    tituloCorto: 'Guayas (Clutch y Acelerador)',
+    titulo: 'Cambio de guayas en vía o domicilio',
+    tituloCorto: 'Guayas (clutch y acelerador)',
     categoria: 'urgencia_vial',
-    etiquetaCategoria: 'Urgencia Vial',
+    etiquetaCategoria: 'Urgencia vial',
     tiempoRespuesta: '20–30 min',
     modalidad: 'En vía o domicilio',
     descripcion:
@@ -105,10 +105,10 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'experto-mecanica-motos',
     numero: '05',
-    titulo: 'Experto en Mecánica de Motos',
+    titulo: 'Experto en mecánica de motos',
     tituloCorto: 'Experto en mecánica de motos',
     categoria: 'electronica_mantenimiento',
-    etiquetaCategoria: 'Especialidad Técnica',
+    etiquetaCategoria: 'Especialidad técnica',
     tiempoRespuesta: '25–35 min',
     modalidad: 'Domicilio y Taller',
     descripcion:
@@ -119,10 +119,10 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'full-inyeccion',
     numero: '06',
-    titulo: 'Inyección Electrónica (Full Inyección FI)',
-    tituloCorto: 'Inyección Electrónica (FI)',
+    titulo: 'Inyección electrónica (Full Inyección FI)',
+    tituloCorto: 'Inyección electrónica (FI)',
     categoria: 'electronica_mantenimiento',
-    etiquetaCategoria: 'Especialidad Técnica',
+    etiquetaCategoria: 'Especialidad técnica',
     tiempoRespuesta: 'Programado / Hoy',
     modalidad: 'Domicilio y Taller',
     descripcion:
@@ -134,10 +134,10 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'scaner-motos',
     numero: '07',
-    titulo: 'Escáner Electrónico de Motos',
+    titulo: 'Escáner electrónico de motos',
     tituloCorto: 'Escáner motos',
     categoria: 'electronica_mantenimiento',
-    etiquetaCategoria: 'Especialidad Técnica',
+    etiquetaCategoria: 'Especialidad técnica',
     tiempoRespuesta: '25–35 min',
     modalidad: 'En sitio con escáner',
     descripcion:
@@ -148,10 +148,10 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'experto-motos-scooter',
     numero: '08',
-    titulo: 'Experto en Motos Scooter (CVT)',
+    titulo: 'Experto en motos scooter (CVT)',
     tituloCorto: 'Experto en motos scooter',
     categoria: 'electronica_mantenimiento',
-    etiquetaCategoria: 'Especialidad Técnica',
+    etiquetaCategoria: 'Especialidad técnica',
     tiempoRespuesta: '25–35 min',
     modalidad: 'Domicilio y Taller',
     descripcion:
@@ -162,7 +162,7 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'cambio-de-aceite',
     numero: '09',
-    titulo: 'Cambio de Aceite y Filtros a Domicilio',
+    titulo: 'Cambio de aceite y filtros a domicilio',
     tituloCorto: 'Cambio de aceite',
     categoria: 'electronica_mantenimiento',
     etiquetaCategoria: 'Mantenimiento',
@@ -176,7 +176,7 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'kit-de-arrastre',
     numero: '10',
-    titulo: 'Cambio de Kit de Arrastre a Domicilio',
+    titulo: 'Cambio de kit de arrastre a domicilio',
     tituloCorto: 'Kit de arrastre',
     categoria: 'electronica_mantenimiento',
     etiquetaCategoria: 'Mantenimiento',
@@ -190,7 +190,7 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'mantenimiento-preventivo',
     numero: '11',
-    titulo: 'Mantenimiento Preventivo',
+    titulo: 'Mantenimiento preventivo',
     tituloCorto: 'Mantenimiento preventivo',
     categoria: 'electronica_mantenimiento',
     etiquetaCategoria: 'Mantenimiento',
@@ -204,7 +204,7 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'mantenimiento-general',
     numero: '12',
-    titulo: 'Mantenimiento General Profundo',
+    titulo: 'Mantenimiento general profundo',
     tituloCorto: 'Mantenimiento general',
     categoria: 'electronica_mantenimiento',
     etiquetaCategoria: 'Mantenimiento',
@@ -218,10 +218,10 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'reparacion-de-motores',
     numero: '13',
-    titulo: 'Reparación de Motores (2T y 4T)',
+    titulo: 'Reparación de motores (2T y 4T)',
     tituloCorto: 'Reparación de motores',
     categoria: 'taller_mayor_repuestos',
-    etiquetaCategoria: 'Taller Mayor',
+    etiquetaCategoria: 'Taller mayor',
     tiempoRespuesta: 'Diagnóstico hoy',
     modalidad: 'Recogida + Taller',
     descripcion:
@@ -232,10 +232,10 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'colision-y-siniestros',
     numero: '14',
-    titulo: 'Reparación por Colisión y Chasis',
+    titulo: 'Reparación por colisión y chasis',
     tituloCorto: 'Colisión y reconstrucción',
     categoria: 'taller_mayor_repuestos',
-    etiquetaCategoria: 'Taller Mayor',
+    etiquetaCategoria: 'Taller mayor',
     tiempoRespuesta: 'Recogida inmediata',
     modalidad: 'Recogida + Taller',
     descripcion:
@@ -246,10 +246,10 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'venta-de-repuestos',
     numero: '15',
-    titulo: 'Venta de Repuestos a Domicilio',
+    titulo: 'Venta de repuestos a domicilio',
     tituloCorto: 'Repuestos',
     categoria: 'taller_mayor_repuestos',
-    etiquetaCategoria: 'Repuestos y Marcas',
+    etiquetaCategoria: 'Repuestos y marcas',
     tiempoRespuesta: 'Con instalación',
     modalidad: 'Entrega en sitio',
     descripcion:
@@ -260,10 +260,10 @@ export const SERVICIOS_16: ServicioItem[] = [
   {
     id: 'todas-las-marcas-de-motos',
     numero: '16',
-    titulo: 'Todas las Marcas de Motos',
+    titulo: 'Todas las marcas de motos',
     tituloCorto: 'Todas las marcas de motos',
     categoria: 'taller_mayor_repuestos',
-    etiquetaCategoria: 'Repuestos y Marcas',
+    etiquetaCategoria: 'Repuestos y marcas',
     tiempoRespuesta: '20–30 min',
     modalidad: 'Multimarca',
     descripcion:
@@ -289,7 +289,7 @@ export const ZONAS_COBERTURA: ZonaCobertura[] = [
   {
     slug: 'itagui',
     nombre: 'Itagüí',
-    tituloSeo: 'Mecánico de Motos y Montallantas a Domicilio en Itagüí – Desvares 123',
+    tituloSeo: 'Mecánico de motos y montallantas a domicilio en Itagüí – Desvares 123',
     descripcionSeo:
       '¿Varado o pinchado en Itagüí? Mecánico de motos a domicilio y montallantas carros y motos en Parque de Itagüí, Santa María, Mayorista, Ditaires y Autopista Sur. Llegamos en 20 min.',
     tiempoArribo: '15–25 min',
@@ -320,7 +320,7 @@ export const ZONAS_COBERTURA: ZonaCobertura[] = [
   {
     slug: 'sabaneta',
     nombre: 'Sabaneta',
-    tituloSeo: 'Mecánico de Motos y Montallantas a Domicilio en Sabaneta – Desvares 123',
+    tituloSeo: 'Mecánico de motos y montallantas a domicilio en Sabaneta – Desvares 123',
     descripcionSeo:
       'Servicio de desvare de motos y montallantas para carros y motos a domicilio en Sabaneta: Aves María, Mayorca, Parque de Sabaneta, Vegas y La Doctora. Expertos en Scooters y FI.',
     tiempoArribo: '15–25 min',
@@ -349,7 +349,7 @@ export const ZONAS_COBERTURA: ZonaCobertura[] = [
   {
     slug: 'envigado',
     nombre: 'Envigado',
-    tituloSeo: 'Mecánico de Motos y Montallantas a Domicilio en Envigado – Desvares 123',
+    tituloSeo: 'Mecánico de motos y montallantas a domicilio en Envigado – Desvares 123',
     descripcionSeo:
       'Mecánico de motos a domicilio y montallantas móvil en Envigado: Las Vegas, Zúñiga, Loma de las Brujas, El Portal, Alcalá, San Marcos y Las Palmas. Escáner, Baterías y Despinche.',
     tiempoArribo: '20–30 min',
@@ -382,7 +382,7 @@ export const ZONAS_COBERTURA: ZonaCobertura[] = [
   {
     slug: 'la-estrella',
     nombre: 'La Estrella',
-    tituloSeo: 'Mecánico de Motos y Montallantas a Domicilio en La Estrella – Desvares 123',
+    tituloSeo: 'Mecánico de motos y montallantas a domicilio en La Estrella – Desvares 123',
     descripcionSeo:
       'Asistencia de mecánica de motos y montallantas para carros y motos a domicilio en La Estrella, Ancón Sur, La Tablaza y Variante Caldas. Desvares, guayas, baterías y taller.',
     tiempoArribo: '20–30 min',
@@ -407,7 +407,7 @@ export const ZONAS_COBERTURA: ZonaCobertura[] = [
   {
     slug: 'medellin',
     nombre: 'Medellín',
-    tituloSeo: 'Mecánico de Motos y Montallantas a Domicilio en Medellín – Desvares 123',
+    tituloSeo: 'Mecánico de motos y montallantas a domicilio en Medellín – Desvares 123',
     descripcionSeo:
       'Mecánico de motos a domicilio y montallantas carros y motos en Medellín: El Poblado, Guayabal, Belén, Laureles, Industriales y Centro. Inyección Electrónica (Full Inyección / Fuel Injection), Escáner, Scooters y Colisión.',
     tiempoArribo: '25–35 min',

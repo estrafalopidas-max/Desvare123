@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageSquare, Phone, ShieldCheck, MapPin, LocateFixed } from 'lucide-react';
+import { MessageSquare, Phone, ShieldCheck, MapPin, LocateFixed, ChevronDown, Wrench } from 'lucide-react';
 import {
   BRAND_CONFIG,
   SERVICIOS_16,
@@ -180,8 +180,8 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
             </p>
 
             <h1 className="font-display text-4xl sm:text-6xl lg:text-[4.25rem] font-bold tracking-tight text-white leading-[0.98]">
-              Mecánico de Motos y Montallantas{' '}
-              <span className="text-[#FF5500]">a Domicilio.</span>
+              Mecánico de motos y montallantas{' '}
+              <span className="text-[#FF5500]">a domicilio.</span>
             </h1>
 
             <p className="text-base sm:text-lg text-slate-200 leading-relaxed max-w-xl">
@@ -201,7 +201,7 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
                 className="inline-flex items-center gap-2.5 px-6 py-3.5 text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors whitespace-nowrap shadow-sm"
               >
                 <MessageSquare className="w-4 h-4 shrink-0" aria-hidden="true" />
-                <span>WhatsApp Directo: {BRAND_CONFIG.telefonoDisplay}</span>
+                <span>WhatsApp directo: {BRAND_CONFIG.telefonoDisplay}</span>
               </a>
 
               <a
@@ -209,7 +209,7 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
                 className="inline-flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-white bg-white/15 hover:bg-white/25 border border-white/25 rounded-lg backdrop-blur-xs transition-colors whitespace-nowrap"
               >
                 <Phone className="w-4 h-4 text-[#FF5500] shrink-0" aria-hidden="true" />
-                <span>Llamar Ahora</span>
+                <span>Llamar ahora</span>
               </a>
             </div>
 
@@ -228,10 +228,10 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
             <div className="w-full rounded-xl bg-white text-slate-900 border border-slate-200/90 shadow-xl p-5 sm:p-6 space-y-4">
               <div className="border-b border-slate-200 pb-3">
                 <p className="text-xs font-bold text-[#FF5500] tracking-wide">
-                  01. Solicitud de Asistencia Inmediata
+                  01. Solicitud de asistencia inmediata
                 </p>
                 <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-900">
-                  Solicita tu Mecánico en 3 Clics
+                  Solicita tu mecánico en 3 clics
                 </h2>
               </div>
 
@@ -265,37 +265,45 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
 
                 {/* Paso 2: Servicio requerido (restringido automáticamente para Carro / Camioneta) */}
                 <div>
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center justify-between mb-1.5">
                     <label
                       htmlFor="triage-servicio"
-                      className="block text-xs font-semibold text-slate-700"
+                      className="block text-xs font-bold uppercase tracking-wider text-slate-700"
                     >
                       2. ¿Qué necesitas hoy?
                     </label>
                     {esCarroOCamioneta && (
-                      <span className="text-[11px] font-medium text-[#FF5500]">
-                        Servicios disponibles para Carro
+                      <span className="text-[11px] font-semibold text-[#FF5500] bg-orange-50 px-2 py-0.5 rounded-full border border-orange-200/60">
+                        Solo carro / camioneta
                       </span>
                     )}
                   </div>
-                  <select
-                    id="triage-servicio"
-                    value={servicioSeleccionadoId}
-                    onChange={(e) => onSelectServicio(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-sm font-medium text-slate-900 focus:outline-none focus:border-[#FF5500]"
-                  >
-                    {serviciosDisponibles.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.numero}. {s.tituloCorto} — ({s.etiquetaCategoria})
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative group">
+                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-[#FF5500] transition-colors">
+                      <Wrench className="w-4 h-4" aria-hidden="true" />
+                    </div>
+                    <select
+                      id="triage-servicio"
+                      value={servicioSeleccionadoId}
+                      onChange={(e) => onSelectServicio(e.target.value)}
+                      className="w-full appearance-none pl-10 pr-10 py-2.5 rounded-xl bg-slate-50/90 hover:bg-white focus:bg-white border border-slate-300 hover:border-slate-400 focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/20 text-sm font-semibold text-slate-900 transition-all cursor-pointer shadow-2xs outline-none"
+                    >
+                      {serviciosDisponibles.map((s) => (
+                        <option key={s.id} value={s.id} className="py-2 text-slate-900 font-medium bg-white">
+                          {s.numero}. {s.tituloCorto} — ({s.etiquetaCategoria})
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center w-6 h-6 rounded-md bg-slate-200/70 group-hover:bg-[#FF5500] text-slate-600 group-hover:text-white transition-colors">
+                      <ChevronDown className="w-3.5 h-3.5 stroke-[2.5]" aria-hidden="true" />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Paso 3: Municipio y Barrio con botón 'Usar mi ubicación actual' */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-semibold text-slate-700">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
                       3. Zona de atención
                     </span>
                     <button
@@ -316,22 +324,30 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
                     <div>
                       <label
                         htmlFor="triage-zona"
-                        className="block text-xs font-medium text-slate-600 mb-1"
+                        className="block text-xs font-medium text-slate-600 mb-1.5"
                       >
                         Municipio
                       </label>
-                      <select
-                        id="triage-zona"
-                        value={zonaSeleccionadaSlug}
-                        onChange={(e) => onSelectZona(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-sm font-medium text-slate-900 focus:outline-none focus:border-[#FF5500]"
-                      >
-                        {ZONAS_COBERTURA.map((z) => (
-                          <option key={z.slug} value={z.slug}>
-                            {z.nombre} ({z.tiempoArribo})
-                          </option>
-                        ))}
-                      </select>
+                      <div className="relative group">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-[#FF5500] transition-colors">
+                          <MapPin className="w-4 h-4" aria-hidden="true" />
+                        </div>
+                        <select
+                          id="triage-zona"
+                          value={zonaSeleccionadaSlug}
+                          onChange={(e) => onSelectZona(e.target.value)}
+                          className="w-full appearance-none pl-9 pr-9 py-2.5 rounded-xl bg-slate-50/90 hover:bg-white focus:bg-white border border-slate-300 hover:border-slate-400 focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/20 text-sm font-semibold text-slate-900 transition-all cursor-pointer shadow-2xs outline-none"
+                        >
+                          {ZONAS_COBERTURA.map((z) => (
+                            <option key={z.slug} value={z.slug} className="py-2 text-slate-900 font-medium bg-white">
+                              {z.nombre} ({z.tiempoArribo})
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center w-5 h-5 rounded bg-slate-200/70 group-hover:bg-[#FF5500] text-slate-600 group-hover:text-white transition-colors">
+                          <ChevronDown className="w-3 h-3 stroke-[2.5]" aria-hidden="true" />
+                        </div>
+                      </div>
                     </div>
 
                     <div>
@@ -398,7 +414,7 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
                   target="_blank"
                   rel="noopener noreferrer"
                   data-ga-conversion="solicitar-rescate-ahora"
-                  data-ga-label="Solicitar Rescate Ahora - WhatsApp Triage"
+                  data-ga-label="Solicitar rescate ahora - WhatsApp Triage"
                   data-ga-location="hero_triage_whatsapp"
                   data-ga-service={servicioSeleccionadoId}
                   data-ga-zone={zonaSeleccionadaSlug}
@@ -412,7 +428,7 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
                 <button
                   type="button"
                   data-ga-conversion="solicitar-rescate-ahora"
-                  data-ga-label="Solicitar Rescate Ahora - Formulario Web"
+                  data-ga-label="Solicitar rescate ahora - Formulario Web"
                   data-ga-location="hero_triage_web"
                   data-ga-service={servicioSeleccionadoId}
                   data-ga-zone={zonaSeleccionadaSlug}
@@ -429,7 +445,7 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
                   className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors whitespace-nowrap cursor-pointer"
                 >
                   <MapPin className="w-4 h-4 text-[#FF5500] shrink-0" aria-hidden="true" />
-                  <span>Solicitar desde la Web</span>
+                  <span>Solicitar desde la web</span>
                 </button>
               </div>
             </div>
@@ -451,13 +467,13 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
             </p>
           </div>
           <div className="p-4 rounded-xl bg-white/95 backdrop-blur-xs border border-slate-200/80 text-slate-900 shadow-xs">
-            <p className="font-display text-2xl font-bold text-[#FF5500]">Cotización Gratis</p>
+            <p className="font-display text-2xl font-bold text-[#FF5500]">Cotización gratis</p>
             <p className="text-xs text-slate-600 mt-0.5">
               Asesoría inmediata por WhatsApp y precios claros antes de iniciar
             </p>
           </div>
           <div className="p-4 rounded-xl bg-white/95 backdrop-blur-xs border border-slate-200/80 text-slate-900 shadow-xs">
-            <p className="font-mono-tabular text-2xl font-bold text-slate-900">16 Servicios</p>
+            <p className="font-mono-tabular text-2xl font-bold text-slate-900">16 servicios</p>
             <p className="text-xs text-slate-600 mt-0.5">
               Montallantas, baterías, FI, scooters, motores y colisión
             </p>

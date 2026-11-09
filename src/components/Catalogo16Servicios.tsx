@@ -13,10 +13,10 @@ interface Catalogo16ServiciosProps {
 }
 
 const TABS_CATEGORIAS: { id: CategoriaServicio | 'todos'; label: string }[] = [
-  { id: 'todos', label: 'Todos los Servicios (16)' },
-  { id: 'urgencia_vial', label: 'Urgencia Vial y Montallantas (4)' },
-  { id: 'electronica_mantenimiento', label: 'Inyección FI, Scooters y Preventivo (8)' },
-  { id: 'taller_mayor_repuestos', label: 'Motores, Colisión y Repuestos (4)' },
+  { id: 'todos', label: 'Todos los servicios (16)' },
+  { id: 'urgencia_vial', label: 'Urgencia vial y montallantas (4)' },
+  { id: 'electronica_mantenimiento', label: 'Inyección FI, scooters y preventivo (8)' },
+  { id: 'taller_mayor_repuestos', label: 'Motores, colisión y repuestos (4)' },
 ];
 
 export const Catalogo16Servicios: React.FC<Catalogo16ServiciosProps> = ({
@@ -39,10 +39,10 @@ export const Catalogo16Servicios: React.FC<Catalogo16ServiciosProps> = ({
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-7">
           <div className="max-w-3xl space-y-2">
             <p className="text-xs sm:text-sm font-bold text-[#FF5500] tracking-wide">
-              03. Catálogo de 16 Servicios Especializados
+              03. Catálogo de 16 servicios especializados
             </p>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900">
-              Mecánica de Motos, Montallantas Carros y Motos, Scooters y Taller
+              Mecánica de motos, montallantas carros y motos, scooters y taller
             </h2>
             <p className="text-sm sm:text-base text-slate-600">
               Elige el servicio que necesitas para pedir un mecánico a domicilio o cotizar gratis
