@@ -169,7 +169,7 @@ function inyectarMetadatosSsr(template: string, pathname: string, baseUrl: strin
   );
   const imagenSocial = `${baseUrl}/images/hero_motorcycle_rescue_1794237578669.jpg`;
 
-  return template
+  const reemplazado = template
     .replace(/<title>.*?<\/title>/s, `<title>${escaparHtml(meta.title)}</title>`)
     .replace(
       /<meta\s+name="description"\s+content=".*?"\s*\/>/s,
@@ -210,11 +210,16 @@ function inyectarMetadatosSsr(template: string, pathname: string, baseUrl: strin
     .replace(
       /<meta\s+name="twitter:image"\s+content=".*?"\s*\/>/s,
       `<meta name="twitter:image" content="${escaparHtml(imagenSocial)}" />`
-    )
-    .replace(
-      '</head>',
-      `<script id="schema-jsonld-desvares123" type="application/ld+json">${schemaJson}</script></head>`
     );
+
+  const etiquetaSchema = `<script id="schema-jsonld-desvares123" type="application/ld+json">${schemaJson}</script>`;
+  if (/<script\s+id="schema-jsonld-desvares123"[^>]*>.*?<\/script>/s.test(reemplazado)) {
+    return reemplazado.replace(
+      /<script\s+id="schema-jsonld-desvares123"[^>]*>.*?<\/script>/s,
+      etiquetaSchema
+    );
+  }
+  return reemplazado.replace('</head>', `${etiquetaSchema}</head>`);
 }
 
 async function iniciarServidor() {
