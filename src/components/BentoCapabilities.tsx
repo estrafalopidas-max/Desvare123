@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowUpRight, Wrench } from 'lucide-react';
+import { MessageSquare, Wrench } from 'lucide-react';
 import { BRAND_CONFIG } from '../data/desvaresData';
 import { obtenerAtributosImagenOptimizada } from '../utils/seoAndTriage';
 
@@ -163,10 +163,15 @@ export const BentoCapabilities: React.FC<BentoCapabilitiesProps> = ({
                     <button
                       type="button"
                       onClick={() => onSeleccionarEspecialidad(card.servicioId)}
+                      data-ga-conversion="solicitar-rescate-ahora"
+                      data-ga-label={card.ctaTexto}
+                      data-ga-location="bento_especialidades"
+                      data-ga-service={card.servicioId}
+                      data-ga-channel="whatsapp"
                       className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-bold text-white bg-slate-900 hover:bg-[#FF5500] rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                     >
+                      <MessageSquare className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                       <span>{card.ctaTexto}</span>
-                      <ArrowUpRight className="w-4 h-4 shrink-0" aria-hidden="true" />
                     </button>
                   </div>
                 </div>

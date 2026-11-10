@@ -29,8 +29,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onAbrirModalDespacho, onResetear
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-2xs">
-      <div className="max-w-[1280px] mx-auto flex items-center justify-between gap-2.5 sm:gap-6 px-4 sm:px-8 py-2.5 sm:py-3">
-        {/* Zona 1: Logotipo automotriz de alta confianza */}
+      <div className="max-w-[1280px] mx-auto flex items-center justify-between gap-2 sm:gap-6 px-3 sm:px-8 py-2.5 sm:py-3">
+        {/* Zona 1: Logotipo automotriz de alta confianza (50% más grande en escritorio y proporcionado en móvil) */}
         <a
           href="/"
           onClick={(e) => {
@@ -39,33 +39,33 @@ export const Navbar: React.FC<NavbarProps> = ({ onAbrirModalDespacho, onResetear
             setMenuMovilAbierto(false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className="group inline-flex items-center gap-2 sm:gap-3 whitespace-nowrap shrink min-w-0 focus-visible:outline-2 focus-visible:outline-[#FF5500]"
+          className="group inline-flex items-center gap-2 sm:gap-3.5 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-[#FF5500]"
         >
           <span
             data-testid="logo-tool-icon"
-            className="relative inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-slate-100 border border-slate-200/90 text-[#0F172A] group-hover:border-[#FF5500]/50 group-hover:bg-orange-50/40 transition-colors shrink-0"
+            className="relative inline-flex items-center justify-center w-9 h-9 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl bg-slate-100 border border-slate-200/90 text-[#0F172A] group-hover:border-[#FF5500]/50 group-hover:bg-orange-50/40 transition-colors shrink-0"
           >
             <Wrench
-              className="w-4 h-4 sm:w-5 sm:h-5 text-[#0F172A] stroke-[2.25] -rotate-12 group-hover:text-[#FF5500] transition-colors"
+              className="w-5 h-5 sm:w-7 sm:h-7 text-[#0F172A] stroke-[2.25] -rotate-12 group-hover:text-[#FF5500] transition-colors"
               aria-hidden="true"
             />
             <span
-              className="absolute bottom-1 sm:bottom-1.5 right-1 sm:right-1.5 w-1.5 h-1.5 rounded-full bg-[#FF5500]"
+              className="absolute bottom-1 sm:bottom-2 right-1 sm:right-2 w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FF5500]"
               aria-hidden="true"
             />
           </span>
 
-          <div className="flex flex-col justify-center leading-none min-w-0">
-            <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="font-display text-xl sm:text-[26px] font-bold tracking-tight text-[#0F172A]">
+          <div className="inline-flex flex-col justify-center leading-none shrink-0">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <span className="font-display text-[22px] sm:text-[38px] font-bold tracking-tight text-[#0F172A]">
                 DESVARES
               </span>
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-900 text-white font-mono-tabular text-xs sm:text-sm font-bold tracking-normal border-l-2 border-[#FF5500]">
+              <span className="inline-flex items-center px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded sm:rounded-md bg-slate-900 text-white font-mono-tabular text-xs sm:text-xl font-bold tracking-normal border-l-2 sm:border-l-3 border-[#FF5500]">
                 123
               </span>
             </div>
-            <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.08em] sm:tracking-[0.12em] uppercase text-slate-500 mt-0.5 truncate">
-              Taller Móvil · Valle de Aburrá
+            <span className="text-[6.8px] sm:text-[11px] font-semibold tracking-[0.02em] sm:tracking-[0.035em] uppercase text-slate-500 mt-0.5 sm:mt-1">
+              Taller móvil · Valle de Aburrá
             </span>
           </div>
         </a>
@@ -204,7 +204,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onAbrirModalDespacho, onResetear
           </a>
         </nav>
 
-        {/* Zona 3: CTA Primaria + Botón hamburguesa móvil */}
+        {/* Zona 3: CTA Primaria hacia el filtro inteligente de WhatsApp + Botón hamburguesa móvil */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <button
             id="btn-solicitar-rescate-ahora"
@@ -216,13 +216,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onAbrirModalDespacho, onResetear
             data-ga-conversion="solicitar-rescate-ahora"
             data-ga-label="Solicitar rescate ahora"
             data-ga-location="navbar_superior"
-            data-ga-channel="formulario_web"
-            title={`Solicitar rescate ahora al ${BRAND_CONFIG.telefonoDisplay}`}
-            className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF5500] shadow-2xs"
+            data-ga-channel="whatsapp"
+            title={`Solicitar rescate ahora por WhatsApp al ${BRAND_CONFIG.telefonoDisplay}`}
+            className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2.5 text-xs sm:text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF5500] shadow-2xs"
           >
-            <PhoneCall className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" aria-hidden="true" />
-            <span className="hidden xs:inline sm:inline">Solicitar rescate ahora</span>
-            <span className="inline xs:hidden sm:hidden">Solicitar rescate</span>
+            <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" aria-hidden="true" />
+            <span className="hidden sm:inline">Solicitar rescate ahora</span>
+            <span className="inline sm:hidden">Solicitar rescate</span>
           </button>
 
           {/* Botón menú desplegable en móvil */}
@@ -231,12 +231,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onAbrirModalDespacho, onResetear
             onClick={() => setMenuMovilAbierto((prev) => !prev)}
             aria-label={menuMovilAbierto ? 'Cerrar menú' : 'Abrir menú de navegación'}
             aria-expanded={menuMovilAbierto}
-            className="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 transition-colors cursor-pointer"
+            className="lg:hidden inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 transition-colors shrink-0 cursor-pointer"
           >
             {menuMovilAbierto ? (
-              <X className="w-5 h-5" aria-hidden="true" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
             ) : (
-              <Menu className="w-5 h-5" aria-hidden="true" />
+              <Menu className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
             )}
           </button>
         </div>

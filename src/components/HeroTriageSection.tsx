@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { MessageSquare, Phone, ShieldCheck, MapPin, LocateFixed, ChevronDown, Wrench } from 'lucide-react';
+import {
+  MessageSquare,
+  Phone,
+  ShieldCheck,
+  MapPin,
+  LocateFixed,
+  ChevronDown,
+  Wrench,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+} from 'lucide-react';
 import {
   BRAND_CONFIG,
   SERVICIOS_16,
@@ -10,6 +21,7 @@ import {
   construirTriageWhatsapp,
   obtenerAtributosImagenOptimizada,
   resolverUbicacionGpsAburra,
+  resolverDireccionExactaGps,
 } from '../utils/seoAndTriage';
 import { TipoToast } from './ToastNotificaciones';
 
@@ -47,17 +59,45 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
   const [imgError, setImgError] = useState(false);
   const [videoError, setVideoError] = useState(false);
   const [obteniendoGps, setObteniendoGps] = useState(false);
+  const [estadoGps, setEstadoGps] = useState<{
+    tipo: 'obteniendo' | 'exito' | 'error';
+    mensaje: string;
+  } | null>(null);
 
   const usarUbicacionActualGps = () => {
+    if (obteniendoGps) return;
     setObteniendoGps(true);
+    setEstadoGps({
+      tipo: 'obteniendo',
+      mensaje:
+        'Obteniendo ubicación GPS de alta precisión... Por favor espera unos segundos y autoriza el permiso en tu navegador.',
+    });
 
-    const aplicarCoordenadas = (lat: number, lng: number) => {
-      const resuelto = resolverUbicacionGpsAburra(lat, lng, zonaSeleccionadaSlug);
+    const aplicarCoordenadas = async (lat: number, lng: number, precision?: number) => {
+      const preliminar = resolverUbicacionGpsAburra(lat, lng, zonaSeleccionadaSlug, precision);
+      if (preliminar.zonaSlug !== zonaSeleccionadaSlug) {
+        onSelectZona(preliminar.zonaSlug);
+      }
+      onChangeBarrio(preliminar.barrioFormateado);
+
+      setEstadoGps({
+        tipo: 'obteniendo',
+        mensaje: 'Coordenadas GPS recibidas. Verificando barrio y dirección exacta...',
+      });
+
+      const resuelto = await resolverDireccionExactaGps(lat, lng, zonaSeleccionadaSlug, precision);
       if (resuelto.zonaSlug !== zonaSeleccionadaSlug) {
         onSelectZona(resuelto.zonaSlug);
       }
       onChangeBarrio(resuelto.barrioFormateado);
       setObteniendoGps(false);
+
+      const textoPrecision = precision && precision > 0 ? ` (precisión ±${precision} m)` : '';
+      setEstadoGps({
+        tipo: 'exito',
+        mensaje: `Ubicación GPS lista${textoPrecision}: ${resuelto.zonaNombre} · ${resuelto.barrioFormateado}`,
+      });
+
       onMostrarToast({
         tipo: 'exito',
         titulo: 'Ubicación GPS completada',
@@ -68,16 +108,39 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
     if (typeof navigator !== 'undefined' && 'geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          aplicarCoordenadas(pos.coords.latitude, pos.coords.longitude);
+          void aplicarCoordenadas(
+            pos.coords.latitude,
+            pos.coords.longitude,
+            Math.round(pos.coords.accuracy || 0)
+          );
         },
-        () => {
-          // Respaldo inmediato con coordenadas del municipio activo cuando el navegador o iframe restringe el sensor GPS
-          aplicarCoordenadas(Number.NaN, Number.NaN);
+        (err) => {
+          setObteniendoGps(false);
+          let motivo = 'No se pudo obtener la señal GPS exacta.';
+          if (err.code === 1) {
+            motivo =
+              'Permiso de ubicación denegado. Activa el GPS o escribe tu barrio manualmente.';
+          } else if (err.code === 3) {
+            motivo =
+              'Tiempo de espera agotado (10 s). Verifica tu señal GPS o escribe tu barrio manualmente.';
+          }
+          const respaldo = resolverUbicacionGpsAburra(Number.NaN, Number.NaN, zonaSeleccionadaSlug);
+          if (!barrioSeleccionado.trim()) {
+            onChangeBarrio(respaldo.barrioFormateado);
+          }
+          setEstadoGps({
+            tipo: 'error',
+            mensaje: motivo,
+          });
         },
-        { enableHighAccuracy: true, timeout: 2000, maximumAge: 60000 }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     } else {
-      aplicarCoordenadas(Number.NaN, Number.NaN);
+      setObteniendoGps(false);
+      setEstadoGps({
+        tipo: 'error',
+        mensaje: 'Tu navegador no soporta GPS. Escribe tu barrio manualmente.',
+      });
     }
   };
 
@@ -192,17 +255,24 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
               </strong>.
             </p>
 
-            {/* Botones rápidos de llamada y regla clara condensada */}
+            {/* Botones rápidos de solicitud filtrada y llamada directa */}
             <div className="flex flex-wrap items-center gap-3 pt-1">
-              <a
-                href={resultadoTriage.urlWhatsapp}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors whitespace-nowrap shadow-sm"
+              <button
+                type="button"
+                onClick={() =>
+                  onAbrirModalConDatos({
+                    servicioId: servicioSeleccionadoId,
+                    zonaSlug: zonaSeleccionadaSlug,
+                    barrio: barrioSeleccionado,
+                    tipoVehiculo,
+                    referenciaVehiculo,
+                  })
+                }
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors whitespace-nowrap shadow-sm cursor-pointer"
               >
                 <MessageSquare className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span>WhatsApp directo: {BRAND_CONFIG.telefonoDisplay}</span>
-              </a>
+              </button>
 
               <a
                 href={`tel:${BRAND_CONFIG.telefonoE164}`}
@@ -313,12 +383,48 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
                       disabled={obteniendoGps}
                       className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-orange-50 hover:bg-orange-100 border border-[#FF5500]/30 text-xs font-bold text-[#FF5500] transition-colors cursor-pointer disabled:opacity-60"
                     >
-                      <LocateFixed className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                      {obteniendoGps ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" aria-hidden="true" />
+                      ) : (
+                        <LocateFixed className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                      )}
                       <span>
                         {obteniendoGps ? 'Detectando GPS...' : 'Usar mi ubicación actual'}
                       </span>
                     </button>
                   </div>
+
+                  {estadoGps && (
+                    <div
+                      role="status"
+                      aria-live="polite"
+                      className={`p-2.5 rounded-lg border flex items-start gap-2 text-[11px] leading-snug ${
+                        estadoGps.tipo === 'obteniendo'
+                          ? 'bg-orange-50 border-orange-200 text-orange-900'
+                          : estadoGps.tipo === 'exito'
+                          ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                          : 'bg-amber-50 border-amber-200 text-amber-900'
+                      }`}
+                    >
+                      {estadoGps.tipo === 'obteniendo' ? (
+                        <Loader2
+                          className="w-3.5 h-3.5 text-[#FF5500] animate-spin shrink-0 mt-0.5"
+                          aria-hidden="true"
+                        />
+                      ) : estadoGps.tipo === 'exito' ? (
+                        <CheckCircle2
+                          className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <AlertCircle
+                          className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5"
+                          aria-hidden="true"
+                        />
+                      )}
+                      <span>{estadoGps.mensaje}</span>
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
@@ -407,46 +513,56 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
                 </div>
               </div>
 
-              {/* Botones de Conversión Directa con seguimiento GA4 */}
+              {/* Botones de Conversión (Pasan por el filtro de datos completos hacia WhatsApp o Llamada) */}
               <div className="space-y-2 pt-1">
                 <a
                   href={resultadoTriage.urlWhatsapp}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={(e) => {
+                    // Si aún no ha escrito el barrio o la marca de la moto en esta tarjeta,
+                    // abrimos el filtro inteligente con lo que ya seleccionó para que el mensaje llegue completo.
+                    if (
+                      barrioSeleccionado.trim().length < 2 ||
+                      referenciaVehiculo.trim().length < 2
+                    ) {
+                      e.preventDefault();
+                      onAbrirModalConDatos({
+                        servicioId: servicioSeleccionadoId,
+                        zonaSlug: zonaSeleccionadaSlug,
+                        barrio: barrioSeleccionado,
+                        tipoVehiculo,
+                        referenciaVehiculo,
+                      });
+                    }
+                  }}
                   data-ga-conversion="solicitar-rescate-ahora"
                   data-ga-label="Solicitar rescate ahora - WhatsApp Triage"
                   data-ga-location="hero_triage_whatsapp"
                   data-ga-service={servicioSeleccionadoId}
                   data-ga-zone={zonaSeleccionadaSlug}
                   data-ga-channel="whatsapp"
-                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors whitespace-nowrap"
+                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors whitespace-nowrap shadow-xs cursor-pointer"
                 >
                   <MessageSquare className="w-4 h-4 shrink-0" aria-hidden="true" />
                   <span>Solicitar por WhatsApp</span>
                 </a>
 
-                <button
-                  type="button"
+                <a
+                  href={`tel:${BRAND_CONFIG.telefonoE164}`}
                   data-ga-conversion="solicitar-rescate-ahora"
-                  data-ga-label="Solicitar rescate ahora - Formulario Web"
-                  data-ga-location="hero_triage_web"
+                  data-ga-label="Solicitar rescate ahora - Llamada Triage"
+                  data-ga-location="hero_triage_llamada"
                   data-ga-service={servicioSeleccionadoId}
                   data-ga-zone={zonaSeleccionadaSlug}
-                  data-ga-channel="formulario_web"
-                  onClick={() =>
-                    onAbrirModalConDatos({
-                      servicioId: servicioSeleccionadoId,
-                      zonaSlug: zonaSeleccionadaSlug,
-                      barrio: barrioSeleccionado,
-                      tipoVehiculo,
-                      referenciaVehiculo,
-                    })
-                  }
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors whitespace-nowrap cursor-pointer"
+                  data-ga-channel="llamada"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors whitespace-nowrap"
                 >
-                  <MapPin className="w-4 h-4 text-[#FF5500] shrink-0" aria-hidden="true" />
-                  <span>Solicitar desde la web</span>
-                </button>
+                  <Phone className="w-4 h-4 text-[#FF5500] shrink-0" aria-hidden="true" />
+                  <span className="font-mono-tabular">
+                    Llamar directo: {BRAND_CONFIG.telefonoDisplay}
+                  </span>
+                </a>
               </div>
             </div>
           </div>

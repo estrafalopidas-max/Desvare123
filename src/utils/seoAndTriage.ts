@@ -14,6 +14,10 @@ export interface ParametrosTriage {
   barrio?: string;
   vehiculoMarcaModelo?: string;
   tipoVehiculo?: 'Moto' | 'Scooter' | 'Carro / Camioneta';
+  nombreCliente?: string;
+  telefonoContacto?: string;
+  detallesFalla?: string;
+  codigoOrden?: string;
 }
 
 export interface ResultadoTriage {
@@ -44,11 +48,29 @@ export function construirTriageWhatsapp(params: ParametrosTriage): ResultadoTria
       ? `${params.tipoVehiculo ?? 'Moto'} - ${params.vehiculoMarcaModelo.trim()}`
       : params.tipoVehiculo ?? 'Motocicleta';
 
+  // Extraer coordenadas si el campo barrio incluye "(GPS: lat, lng)" para adjuntar pin directo de Google Maps
+  const matchGps = params.barrio?.match(/GPS:\s*(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/i);
+  const enlacePinMaps = matchGps
+    ? `https://maps.google.com/?q=${matchGps[1]},${matchGps[2]}`
+    : null;
+
   const mensajeLineas = [
     `Hola *${BRAND_CONFIG.nombre}*, solicito cotización gratis y asistencia a domicilio:`,
+    ...(params.codigoOrden ? [`• *Orden web:* #${params.codigoOrden}`] : []),
+    ...(params.nombreCliente && params.nombreCliente.trim().length > 0
+      ? [
+          `• *Cliente:* ${params.nombreCliente.trim()}${
+            params.telefonoContacto ? ` (${params.telefonoContacto.trim()})` : ''
+          }`,
+        ]
+      : []),
     `• *Servicio:* ${servicio.tituloCorto} (${servicio.numero})`,
     `• *Ubicación:* ${sectorDetalle}`,
+    ...(enlacePinMaps ? [`• *Pin GPS exacto:* ${enlacePinMaps}`] : []),
     `• *Vehículo:* ${vehiculoDetalle}`,
+    ...(params.detallesFalla && params.detallesFalla.trim().length > 0
+      ? [`• *Detalle de la falla:* ${params.detallesFalla.trim()}`]
+      : []),
     `A continuación envío mi ubicación o detalles para atención inmediata:`,
   ];
 
@@ -199,6 +221,14 @@ export function construirSchemaJsonLd(
           : `${BRAND_CONFIG.nombre} – Mecánico de motos y montallantas a domicilio`,
         url: zona ? `${cleanBase}/zona/${zona.slug}` : cleanBase,
         telephone: BRAND_CONFIG.telefonoE164,
+        email: BRAND_CONFIG.emailContacto,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: BRAND_CONFIG.direccionTaller,
+          addressLocality: zona ? zona.nombre : 'Itagüí',
+          addressRegion: 'Antioquia',
+          addressCountry: 'CO',
+        },
         priceRange: '$$',
         currenciesAccepted: 'COP',
         paymentAccepted: 'Efectivo, Nequi, Transferencia Bancolombia, Tarjetas',
@@ -385,21 +415,60 @@ export const COORDENADAS_MUNICIPIOS_ABURRA: CoordenadaMunicipioAburra[] = [
   },
 ];
 
+/**
+ * Malla detallada de barrios y nodos viales del Valle de Aburrá para asignar con alta precisión
+ * el barrio y municipio más cercano incluso sin conexión a geocodificación externa.
+ */
+const MICROZONAS_BARRIOS_ABURRA: CoordenadaMunicipioAburra[] = [
+  // Itagüí
+  { slug: 'itagui', nombre: 'Itagüí', lat: 6.1726, lng: -75.6096, sectorReferencia: 'Parque de Itagüí' },
+  { slug: 'itagui', nombre: 'Itagüí', lat: 6.1852, lng: -75.5972, sectorReferencia: 'Central Mayorista / Santa María' },
+  { slug: 'itagui', nombre: 'Itagüí', lat: 6.1645, lng: -75.6152, sectorReferencia: 'Suramérica / Ditaires' },
+  { slug: 'itagui', nombre: 'Itagüí', lat: 6.1785, lng: -75.6038, sectorReferencia: 'San Fernando / La Moda' },
+  { slug: 'itagui', nombre: 'Itagüí', lat: 6.1602, lng: -75.6245, sectorReferencia: 'Pilsen / Bariloche' },
+  // Sabaneta
+  { slug: 'sabaneta', nombre: 'Sabaneta', lat: 6.1515, lng: -75.6166, sectorReferencia: 'Parque de Sabaneta / Aves María' },
+  { slug: 'sabaneta', nombre: 'Sabaneta', lat: 6.1608, lng: -75.6055, sectorReferencia: 'Mayorca / Vegas de Sabaneta' },
+  { slug: 'sabaneta', nombre: 'Sabaneta', lat: 6.1448, lng: -75.6212, sectorReferencia: 'Calle Larga / Prados de Sabaneta' },
+  // Envigado
+  { slug: 'envigado', nombre: 'Envigado', lat: 6.1696, lng: -75.5876, sectorReferencia: 'Parque de Envigado / Las Vegas' },
+  { slug: 'envigado', nombre: 'Envigado', lat: 6.1795, lng: -75.5818, sectorReferencia: 'Zúñiga / Villagrande' },
+  { slug: 'envigado', nombre: 'Envigado', lat: 6.1632, lng: -75.5965, sectorReferencia: 'El Portal / Alcalá' },
+  { slug: 'envigado', nombre: 'Envigado', lat: 6.1585, lng: -75.5742, sectorReferencia: 'El Escobero / Señorial' },
+  // La Estrella
+  { slug: 'la-estrella', nombre: 'La Estrella', lat: 6.1577, lng: -75.6432, sectorReferencia: 'Parque de La Estrella' },
+  { slug: 'la-estrella', nombre: 'La Estrella', lat: 6.1522, lng: -75.6295, sectorReferencia: 'Ancón Sur / Bellavista' },
+  { slug: 'la-estrella', nombre: 'La Estrella', lat: 6.1265, lng: -75.6345, sectorReferencia: 'La Tablaza' },
+  // Medellín (Sur, Occidente y Norte)
+  { slug: 'medellin', nombre: 'Medellín', lat: 6.2088, lng: -75.5678, sectorReferencia: 'El Poblado / Milla de Oro' },
+  { slug: 'medellin', nombre: 'Medellín', lat: 6.2285, lng: -75.5748, sectorReferencia: 'Ciudad del Río / Industriales' },
+  { slug: 'medellin', nombre: 'Medellín', lat: 6.2095, lng: -75.5865, sectorReferencia: 'Guayabal / Cristo Rey' },
+  { slug: 'medellin', nombre: 'Medellín', lat: 6.2315, lng: -75.6042, sectorReferencia: 'Belén / Rosales' },
+  { slug: 'medellin', nombre: 'Medellín', lat: 6.2455, lng: -75.5955, sectorReferencia: 'Laureles / Estadio' },
+  { slug: 'medellin', nombre: 'Medellín', lat: 6.2528, lng: -75.6095, sectorReferencia: 'La América / San Javier' },
+  { slug: 'medellin', nombre: 'Medellín', lat: 6.2632, lng: -75.5945, sectorReferencia: 'Los Colores / Cuarta Brigada' },
+  { slug: 'medellin', nombre: 'Medellín', lat: 6.2765, lng: -75.5985, sectorReferencia: 'Robledo' },
+  { slug: 'medellin', nombre: 'Medellín', lat: 6.2895, lng: -75.5762, sectorReferencia: 'Castilla' },
+  { slug: 'medellin', nombre: 'Medellín', lat: 6.2476, lng: -75.5698, sectorReferencia: 'Centro / La Candelaria' },
+];
+
 export interface ResultadoUbicacionGps {
   zonaSlug: string;
   zonaNombre: string;
   barrioFormateado: string;
   coordenadasTexto: string;
+  precisionMetros?: number;
 }
 
 /**
- * Determina el municipio más cercano del Valle de Aburrá a partir de coordenadas GPS (lat, lng)
+ * Determina el municipio y barrio más cercano del Valle de Aburrá a partir de coordenadas GPS (lat, lng)
  * y genera el texto de ubicación listo para agilizar el despacho.
  */
 export function resolverUbicacionGpsAburra(
   lat: number,
   lng: number,
-  zonaPreferidaSlug = 'itagui'
+  zonaPreferidaSlug = 'itagui',
+  precisionMetros?: number
 ): ResultadoUbicacionGps {
   const coordenadasValidas =
     Number.isFinite(lat) &&
@@ -433,13 +502,14 @@ export function resolverUbicacionGpsAburra(
       zonaNombre: base.nombre,
       coordenadasTexto: coordsStr,
       barrioFormateado: `${base.sectorReferencia} (GPS: ${coordsStr})`,
+      precisionMetros,
     };
   }
 
-  let masCercano = COORDENADAS_MUNICIPIOS_ABURRA[0];
+  let masCercano = MICROZONAS_BARRIOS_ABURRA[0];
   let menorDistancia = Number.POSITIVE_INFINITY;
 
-  for (const item of COORDENADAS_MUNICIPIOS_ABURRA) {
+  for (const item of MICROZONAS_BARRIOS_ABURRA) {
     const dLat = lat - item.lat;
     const dLng = lng - item.lng;
     const distCuadrada = dLat * dLat + dLng * dLng;
@@ -455,7 +525,107 @@ export function resolverUbicacionGpsAburra(
     zonaNombre: masCercano.nombre,
     coordenadasTexto: coordsStr,
     barrioFormateado: `${masCercano.sectorReferencia} (GPS: ${coordsStr})`,
+    precisionMetros,
   };
 }
+
+/**
+ * Enriquece las coordenadas GPS consultando geocodificación inversa (OpenStreetMap Nominatim)
+ * para obtener el barrio y vía exacta cuando hay conexión disponible, manteniendo respaldo instantáneo.
+ */
+export async function resolverDireccionExactaGps(
+  lat: number,
+  lng: number,
+  zonaPreferidaSlug = 'itagui',
+  precisionMetros?: number
+): Promise<ResultadoUbicacionGps> {
+  const base = resolverUbicacionGpsAburra(lat, lng, zonaPreferidaSlug, precisionMetros);
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lng) || typeof fetch === 'undefined') {
+    return base;
+  }
+
+  const controlador = new AbortController();
+  const timer = setTimeout(() => controlador.abort(), 3500);
+
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat.toFixed(
+      6
+    )}&lon=${lng.toFixed(6)}&zoom=18&addressdetails=1&accept-language=es`;
+
+    const res = await fetch(url, {
+      signal: controlador.signal,
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!res.ok) return base;
+    const data = await res.json();
+    const addr = data?.address;
+    if (!addr) return base;
+
+    const textoMunicipio = [
+      addr.city,
+      addr.town,
+      addr.municipality,
+      addr.county,
+      data?.display_name,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+
+    let zonaSlugDetectada = base.zonaSlug;
+    let zonaNombreDetectada = base.zonaNombre;
+
+    if (textoMunicipio.includes('itagüí') || textoMunicipio.includes('itagui')) {
+      zonaSlugDetectada = 'itagui';
+      zonaNombreDetectada = 'Itagüí';
+    } else if (textoMunicipio.includes('sabaneta')) {
+      zonaSlugDetectada = 'sabaneta';
+      zonaNombreDetectada = 'Sabaneta';
+    } else if (textoMunicipio.includes('envigado')) {
+      zonaSlugDetectada = 'envigado';
+      zonaNombreDetectada = 'Envigado';
+    } else if (textoMunicipio.includes('la estrella') || textoMunicipio.includes('estrella')) {
+      zonaSlugDetectada = 'la-estrella';
+      zonaNombreDetectada = 'La Estrella';
+    } else if (textoMunicipio.includes('medellín') || textoMunicipio.includes('medellin')) {
+      zonaSlugDetectada = 'medellin';
+      zonaNombreDetectada = 'Medellín';
+    }
+
+    const barrioDetectado =
+      addr.neighbourhood ||
+      addr.suburb ||
+      addr.quarter ||
+      addr.city_district ||
+      addr.residential ||
+      '';
+    const viaDetectada = addr.road || addr.pedestrian || '';
+
+    const partesSector = [barrioDetectado, viaDetectada].filter(Boolean);
+    if (partesSector.length === 0) {
+      return {
+        ...base,
+        zonaSlug: zonaSlugDetectada,
+        zonaNombre: zonaNombreDetectada,
+      };
+    }
+
+    const coordsStr = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    return {
+      zonaSlug: zonaSlugDetectada,
+      zonaNombre: zonaNombreDetectada,
+      coordenadasTexto: coordsStr,
+      barrioFormateado: `${partesSector.join(' · ')} (GPS: ${coordsStr})`,
+      precisionMetros,
+    };
+  } catch {
+    return base;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 
 

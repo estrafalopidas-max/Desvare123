@@ -18,7 +18,7 @@ interface MapaCoberturaAburraProps {
 
 const MAPS_API_KEY =
   (import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined) ||
-  (typeof process !== 'undefined' && process.env?.GOOGLE_MAPS_PLATFORM_KEY) ||
+  process.env.GOOGLE_MAPS_PLATFORM_KEY ||
   '';
 
 interface PuntoMapaMunicipio extends CoordenadaMunicipioAburra {
@@ -97,16 +97,14 @@ const MarcadorMunicipioGmp: React.FC<MarcadorMunicipioGmpProps> = ({
 
 /**
  * Mapa interactivo de cobertura del Valle de Aburrá (Itagüí, Sabaneta, Envigado, La Estrella y Medellín).
- * Combina la vista cartográfica vectorial de unidades móviles con Google Maps Platform (@vis.gl/react-google-maps).
+ * Combina la vista cartográfica vectorial de unidades móviles con Google Maps.
  */
 export const MapaCoberturaAburra: React.FC<MapaCoberturaAburraProps> = ({
   zonaActivaSlug,
   onSeleccionarZonaDesdeMapa,
 }) => {
   const tieneApiKeyGmp = Boolean(MAPS_API_KEY && MAPS_API_KEY.trim().length > 5);
-  const [modoVista, setModoVista] = useState<'radar' | 'google_maps'>(
-    tieneApiKeyGmp ? 'google_maps' : 'radar'
-  );
+  const [modoVista, setModoVista] = useState<'radar' | 'google_maps'>('google_maps');
 
   const puntoActivo =
     PUNTOS_MUNICIPIOS_VALLE.find((p) => p.slug === zonaActivaSlug) ?? PUNTOS_MUNICIPIOS_VALLE[0];
@@ -118,7 +116,7 @@ export const MapaCoberturaAburra: React.FC<MapaCoberturaAburraProps> = ({
       data-testid="mapa-cobertura-aburra"
       className="rounded-xl bg-slate-900 text-white border border-slate-800 overflow-hidden shadow-md"
     >
-      {/* Cabecera del Mapa con estado de flota y selector de modo */}
+      {/* Cabecera del Mapa con estado de flota y selector de modo siempre visible */}
       <div className="px-4 sm:px-6 py-4 bg-slate-950/90 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="space-y-0.5">
           <div className="flex items-center gap-2 text-xs font-bold text-[#FF5500]">
@@ -136,64 +134,84 @@ export const MapaCoberturaAburra: React.FC<MapaCoberturaAburraProps> = ({
           </p>
         </div>
 
-        {tieneApiKeyGmp && (
-          <div
-            role="group"
-            aria-label="Cambiar vista del mapa de cobertura"
-            className="inline-flex items-center p-1 rounded-lg bg-slate-900 border border-slate-800 shrink-0 self-start sm:self-auto"
+        <div
+          role="group"
+          aria-label="Cambiar vista del mapa de cobertura"
+          className="inline-flex items-center p-1 rounded-lg bg-slate-900 border border-slate-800 shrink-0 self-start sm:self-auto"
+        >
+          <button
+            type="button"
+            onClick={() => setModoVista('google_maps')}
+            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors cursor-pointer ${
+              modoVista === 'google_maps'
+                ? 'bg-[#FF5500] text-white'
+                : 'text-slate-300 hover:text-white'
+            }`}
           >
-            <button
-              type="button"
-              onClick={() => setModoVista('google_maps')}
-              className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors cursor-pointer ${
-                modoVista === 'google_maps'
-                  ? 'bg-[#FF5500] text-white'
-                  : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              Google Maps
-            </button>
-            <button
-              type="button"
-              onClick={() => setModoVista('radar')}
-              className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors cursor-pointer ${
-                modoVista === 'radar'
-                  ? 'bg-[#FF5500] text-white'
-                  : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              Esquema Vial Sur
-            </button>
-          </div>
-        )}
+            Google Maps
+          </button>
+          <button
+            type="button"
+            onClick={() => setModoVista('radar')}
+            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors cursor-pointer ${
+              modoVista === 'radar'
+                ? 'bg-[#FF5500] text-white'
+                : 'text-slate-300 hover:text-white'
+            }`}
+          >
+            Esquema vial sur
+          </button>
+        </div>
       </div>
 
       {/* Cuerpo del Mapa + Tarjeta lateral del Municipio Activo */}
       <div className="grid grid-cols-1 lg:grid-cols-12">
         {/* Lienzo del Mapa (8 columnas) */}
         <div className="lg:col-span-8 relative min-h-[360px] sm:min-h-[420px] bg-[#0B1120] border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col justify-between">
-          {modoVista === 'google_maps' && tieneApiKeyGmp ? (
-            <div className="w-full h-[340px] sm:h-[370px]">
-              <APIProvider apiKey={MAPS_API_KEY} language="es" region="CO" libraries={['marker']}>
-                <GoogleMap
-                  mapId="DEMO_MAP_ID"
-                  defaultCenter={{ lat: 6.1726, lng: -75.6096 }}
-                  defaultZoom={12}
-                  gestureHandling="cooperative"
-                  disableDefaultUI={false}
-                  internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
-                >
-                  {PUNTOS_MUNICIPIOS_VALLE.map((punto) => (
-                    <MarcadorMunicipioGmp
-                      key={punto.slug}
-                      punto={punto}
-                      esActivo={punto.slug === zonaActivaSlug}
-                      onSelect={onSeleccionarZonaDesdeMapa}
-                    />
-                  ))}
-                </GoogleMap>
-              </APIProvider>
-            </div>
+          {modoVista === 'google_maps' ? (
+            tieneApiKeyGmp ? (
+              <div className="w-full h-[340px] sm:h-[370px]">
+                <APIProvider apiKey={MAPS_API_KEY} language="es" region="CO" libraries={['marker']}>
+                  <GoogleMap
+                    mapId="DEMO_MAP_ID"
+                    defaultCenter={{ lat: 6.1726, lng: -75.6096 }}
+                    defaultZoom={12}
+                    gestureHandling="cooperative"
+                    disableDefaultUI={false}
+                    internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
+                  >
+                    {PUNTOS_MUNICIPIOS_VALLE.map((punto) => (
+                      <MarcadorMunicipioGmp
+                        key={punto.slug}
+                        punto={punto}
+                        esActivo={punto.slug === zonaActivaSlug}
+                        onSelect={onSeleccionarZonaDesdeMapa}
+                      />
+                    ))}
+                  </GoogleMap>
+                </APIProvider>
+              </div>
+            ) : (
+              <div className="relative w-full h-[340px] sm:h-[370px] bg-slate-900">
+                <iframe
+                  key={puntoActivo.slug}
+                  title={`Google Maps - Cobertura Desvares 123 en ${puntoActivo.nombre}`}
+                  src={`https://maps.google.com/maps?q=${puntoActivo.lat},${puntoActivo.lng}&z=13&hl=es&output=embed`}
+                  className="w-full h-full border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+                <div className="pointer-events-none absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
+                  <div className="pointer-events-auto inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-950/90 backdrop-blur-xs border border-slate-700 text-xs text-white shadow-md">
+                    <span className="w-2 h-2 rounded-full bg-[#FF5500]" aria-hidden="true" />
+                    <span className="font-bold">{puntoActivo.nombre}:</span>
+                    <span className="text-emerald-400 font-semibold">
+                      {puntoActivo.zona.unidadesActivas} unidades ({puntoActivo.zona.tiempoArribo})
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )
           ) : (
             <div className="relative w-full h-[340px] sm:h-[370px] p-3 sm:p-4">
               {/* Mapa Cartográfico Vectorial Interactivo del Valle de Aburrá */}
@@ -458,13 +476,13 @@ export const MapaCoberturaAburra: React.FC<MapaCoberturaAburraProps> = ({
               target="_blank"
               rel="noopener noreferrer"
               data-ga-conversion="solicitar-rescate-ahora"
-              data-ga-label={`Solicitar Rescate Ahora - Mapa ${puntoActivo.nombre}`}
+              data-ga-label={`Solicitar rescate ahora - Mapa ${puntoActivo.nombre}`}
               data-ga-location="mapa_cobertura"
               data-ga-zone={puntoActivo.slug}
               data-ga-channel="whatsapp"
               className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#FF5500] hover:bg-[#E04800] text-xs sm:text-sm font-bold text-white transition-colors"
             >
-              <span>Solicitar Unidad en {puntoActivo.nombre}</span>
+              <span>Solicitar unidad en {puntoActivo.nombre}</span>
             </a>
             <p className="text-[11px] text-slate-400 flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" aria-hidden="true" />

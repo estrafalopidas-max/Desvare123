@@ -4,7 +4,7 @@ import { HeroTriageSection } from './components/HeroTriageSection';
 import { BentoCapabilities } from './components/BentoCapabilities';
 import { Catalogo16Servicios } from './components/Catalogo16Servicios';
 import { SiloCoberturaLocal } from './components/SiloCoberturaLocal';
-import { ModalOrdenDespacho, OrdenRegistrada } from './components/ModalOrdenDespacho';
+import { ModalOrdenDespacho } from './components/ModalOrdenDespacho';
 import { FaqAndFooter } from './components/FaqAndFooter';
 import {
   ToastNotificaciones,
@@ -16,44 +16,7 @@ import {
   construirSchemaJsonLd,
 } from './utils/seoAndTriage';
 
-const SESSION_STORAGE_KEY = 'desvares123_session_token';
-
-function generarTokenSesionUnico(): string {
-  try {
-    if (typeof window !== 'undefined' && window.crypto?.getRandomValues) {
-      const bytes = new Uint8Array(16);
-      window.crypto.getRandomValues(bytes);
-      const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
-      return `s123_${hex}_${Date.now().toString(36)}`;
-    }
-  } catch {
-    // Continúa a generador alfanumérico aleatorio por instancia
-  }
-  return (
-    's123_' +
-    Math.random().toString(36).substring(2, 12) +
-    Math.random().toString(36).substring(2, 12) +
-    '_' +
-    Date.now().toString(36)
-  );
-}
-
-function obtenerOCrearTokenSesion(): string {
-  const nuevoToken = generarTokenSesionUnico();
-  try {
-    const guardado = window.localStorage.getItem(SESSION_STORAGE_KEY);
-    if (guardado && guardado.length >= 16 && /^[a-zA-Z0-9_-]+$/.test(guardado)) {
-      return guardado;
-    }
-    window.localStorage.setItem(SESSION_STORAGE_KEY, nuevoToken);
-    return nuevoToken;
-  } catch {
-    return nuevoToken;
-  }
-}
-
 export default function App() {
-  const [tokenSesion] = useState<string>(() => obtenerOCrearTokenSesion());
   const [pathnameActual, setPathnameActual] = useState<string>(() => window.location.pathname);
 
   const metaInicial = obtenerMetadatosPorRuta(window.location.pathname);
@@ -76,7 +39,6 @@ export default function App() {
     tipoVehiculo: 'Moto',
     referenciaVehiculo: '',
   });
-  const [ordenesSesion, setOrdenesSesion] = useState<OrdenRegistrada[]>([]);
   const [notificacionesToast, setNotificacionesToast] = useState<NotificacionToast[]>([]);
   const [gmpQuotaExceeded, setGmpQuotaExceeded] = useState<boolean>(false);
 
@@ -134,28 +96,6 @@ export default function App() {
     );
   }, [pathnameActual]);
 
-  // Cargar órdenes registradas previamente por la sesión del usuario
-  useEffect(() => {
-    let cancelado = false;
-    fetch('/api/solicitudes', {
-      headers: {
-        Authorization: `Bearer ${tokenSesion}`,
-      },
-    })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (!cancelado && data && Array.isArray(data.ordenes)) {
-          setOrdenesSesion(data.ordenes);
-        }
-      })
-      .catch(() => {
-        // Modo resiliente si se sirve sin backend
-      });
-    return () => {
-      cancelado = true;
-    };
-  }, [tokenSesion]);
-
   // Escuchar cambios de navegación atrás/adelante
   useEffect(() => {
     const alCambiarPopState = () => {
@@ -194,7 +134,7 @@ export default function App() {
     document.getElementById('asistencia-inmediata')?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
-  const seleccionarServicioYDespachar = useCallback(
+  const seleccionarServicioYFiltrarParaWhatsapp = useCallback(
     (servicioId: string) => {
       setServicioSeleccionadoId(servicioId);
       setDatosModal((prev) => ({
@@ -265,18 +205,11 @@ export default function App() {
         />
 
         <BentoCapabilities
-          onSeleccionarEspecialidad={(servicioId) => {
-            setServicioSeleccionadoId(servicioId);
-            document
-              .getElementById('asistencia-inmediata')
-              ?.scrollIntoView({ behavior: 'smooth' });
-          }}
+          onSeleccionarEspecialidad={seleccionarServicioYFiltrarParaWhatsapp}
         />
 
         <Catalogo16Servicios
-          zonaActualSlug={zonaSeleccionadaSlug}
-          barrioActual={barrioSeleccionado}
-          onSeleccionarServicioParaDespacho={seleccionarServicioYDespachar}
+          onSeleccionarServicioParaDespacho={seleccionarServicioYFiltrarParaWhatsapp}
         />
 
         <SiloCoberturaLocal
@@ -287,7 +220,6 @@ export default function App() {
         />
 
         <FaqAndFooter
-          ordenesSesion={ordenesSesion}
           onAbrirModalDespacho={() => {
             setDatosModal({
               servicioId: servicioSeleccionadoId,
@@ -306,13 +238,8 @@ export default function App() {
         abierto={modalAbierto}
         onCerrar={() => setModalAbierto(false)}
         valoresIniciales={datosModal}
-        onOrdenCreada={(nuevaOrden) => {
-          setOrdenesSesion((prev) => [nuevaOrden, ...prev]);
-        }}
-        tokenSesion={tokenSesion}
         onMostrarToast={mostrarToast}
       />
     </div>
   );
 }
-

@@ -13,7 +13,7 @@ import {
 } from './seoAndTriage';
 import { SERVICIOS_16, ZONAS_COBERTURA, BRAND_CONFIG } from '../data/desvaresData';
 
-test('resolverUbicacionGpsAburra detecta el municipio más cercano y formatea las coordenadas GPS', () => {
+test('resolverUbicacionGpsAburra detecta el municipio y barrio más cercano y formatea las coordenadas GPS', () => {
   const enSabaneta = resolverUbicacionGpsAburra(6.1518, -75.6162);
   assert.equal(enSabaneta.zonaSlug, 'sabaneta');
   assert.equal(enSabaneta.zonaNombre, 'Sabaneta');
@@ -22,6 +22,17 @@ test('resolverUbicacionGpsAburra detecta el municipio más cercano y formatea la
   const enEnvigado = resolverUbicacionGpsAburra(6.1701, -75.5880);
   assert.equal(enEnvigado.zonaSlug, 'envigado');
   assert.equal(enEnvigado.zonaNombre, 'Envigado');
+
+  const enRobledo = resolverUbicacionGpsAburra(6.2762, -75.5980);
+  assert.equal(enRobledo.zonaSlug, 'medellin');
+  assert.ok(enRobledo.barrioFormateado.includes('Robledo'));
+
+  const triageConPin = construirTriageWhatsapp({
+    servicioId: 'la-moto-no-prende',
+    zonaSlug: enRobledo.zonaSlug,
+    barrio: enRobledo.barrioFormateado,
+  });
+  assert.ok(triageConPin.mensajeTextoPlano.includes('https://maps.google.com/?q=6.2762,-75.5980'));
 
   const fallback = resolverUbicacionGpsAburra(Number.NaN, Number.NaN, 'itagui');
   assert.equal(fallback.zonaSlug, 'itagui');

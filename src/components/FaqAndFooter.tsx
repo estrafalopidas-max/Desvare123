@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { ChevronDown, ClipboardList, Wrench } from 'lucide-react';
+import { ChevronDown, Wrench, MessageSquare, Phone } from 'lucide-react';
 import {
   BRAND_CONFIG,
   PREGUNTAS_FRECUENTES,
   ZONAS_COBERTURA,
 } from '../data/desvaresData';
-import { OrdenRegistrada } from './ModalOrdenDespacho';
 
 interface FaqAndFooterProps {
-  ordenesSesion: OrdenRegistrada[];
   onAbrirModalDespacho: () => void;
   onCambiarZona: (slug: string, actualizarUrl?: boolean) => void;
 }
@@ -41,7 +39,6 @@ const TESTIMONIOS_ATRIBUIBLES = [
 ];
 
 export const FaqAndFooter: React.FC<FaqAndFooterProps> = ({
-  ordenesSesion,
   onAbrirModalDespacho,
   onCambiarZona,
 }) => {
@@ -49,53 +46,6 @@ export const FaqAndFooter: React.FC<FaqAndFooterProps> = ({
 
   return (
     <>
-      {/* Sección de Órdenes Registradas en la Sesión Actual (si existen) */}
-      {ordenesSesion.length > 0 && (
-        <section
-          aria-label="Tus órdenes de despacho recientes"
-          className="py-10 bg-white border-b border-slate-200"
-        >
-          <div className="max-w-[1280px] mx-auto px-4 sm:px-8">
-            <div className="rounded-xl bg-[#F8FAFC] border border-slate-200 p-5 sm:p-6 space-y-4">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2.5">
-                  <ClipboardList className="w-5 h-5 text-[#FF5500]" aria-hidden="true" />
-                  <h2 className="font-display text-2xl font-bold text-slate-900">
-                    Mis solicitudes de servicio activas ({ordenesSesion.length})
-                  </h2>
-                </div>
-                <span className="text-xs text-slate-500">
-                  Respaldo privado en tu sesión actual
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {ordenesSesion.map((orden) => (
-                  <div
-                    key={orden.id}
-                    className="p-4 rounded-lg bg-white border border-slate-200 space-y-1.5 text-xs shadow-2xs"
-                  >
-                    <div className="flex items-center justify-between text-slate-500">
-                      <span className="font-mono-tabular font-bold text-[#FF5500]">
-                        Solicitud #{orden.codigoOrden}
-                      </span>
-                      <span>{orden.zonaNombre} · {orden.barrio}</span>
-                    </div>
-                    <p className="text-sm font-bold text-slate-900">{orden.servicioTitulo}</p>
-                    <p className="text-slate-600">
-                      Vehículo: {orden.tipoVehiculo} — {orden.referenciaVehiculo}
-                    </p>
-                    <p className="text-slate-500">
-                      Cliente: {orden.nombreCliente} ({orden.telefonoContacto})
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Casos Reales Condensados */}
       <section className="py-14 sm:py-18 bg-white border-b border-slate-200">
         <div className="max-w-[1280px] mx-auto px-4 sm:px-8">
@@ -147,14 +97,26 @@ export const FaqAndFooter: React.FC<FaqAndFooterProps> = ({
                 motores o colisión.
               </p>
 
-              <div className="pt-2">
+              <div className="pt-2 flex flex-wrap items-center gap-2.5">
                 <button
                   type="button"
                   onClick={onAbrirModalDespacho}
-                  className="px-5 py-3 text-xs sm:text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors cursor-pointer"
+                  data-ga-conversion="solicitar-rescate-ahora"
+                  data-ga-label="Solicitar mecánico a domicilio - FAQ"
+                  data-ga-location="faq_seccion"
+                  data-ga-channel="whatsapp"
+                  className="inline-flex items-center gap-2 px-5 py-3 text-xs sm:text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors cursor-pointer"
                 >
-                  Solicitar mecánico a domicilio
+                  <MessageSquare className="w-4 h-4 shrink-0" aria-hidden="true" />
+                  <span>Solicitar mecánico a domicilio</span>
                 </button>
+                <a
+                  href={`tel:${BRAND_CONFIG.telefonoE164}`}
+                  className="inline-flex items-center gap-1.5 px-4 py-3 text-xs sm:text-sm font-semibold text-slate-800 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors"
+                >
+                  <Phone className="w-4 h-4 text-[#FF5500] shrink-0" aria-hidden="true" />
+                  <span>Llamar ahora</span>
+                </a>
               </div>
             </div>
 
@@ -200,28 +162,28 @@ export const FaqAndFooter: React.FC<FaqAndFooterProps> = ({
         <div className="max-w-[1280px] mx-auto px-4 sm:px-8 space-y-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2.5">
-                <span className="relative inline-flex items-center justify-center w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 shrink-0">
+              <div className="inline-flex items-center gap-3.5">
+                <span className="relative inline-flex items-center justify-center w-14 h-14 rounded-xl bg-slate-800 border border-slate-700 shrink-0">
                   <Wrench
-                    className="w-4 h-4 text-white stroke-[2.25] -rotate-12"
+                    className="w-7 h-7 text-white stroke-[2.25] -rotate-12"
                     aria-hidden="true"
                   />
                   <span
-                    className="absolute bottom-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#FF5500]"
+                    className="absolute bottom-2 right-2 w-2.5 h-2.5 rounded-full bg-[#FF5500]"
                     aria-hidden="true"
                   />
                 </span>
-                <div className="flex flex-col leading-none">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-display text-2xl font-bold text-white tracking-tight">
+                <div className="inline-flex flex-col leading-none">
+                  <div className="flex items-center gap-2">
+                    <span className="font-display text-4xl font-bold text-white tracking-tight">
                       DESVARES
                     </span>
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-white/10 text-white font-mono-tabular text-xs font-bold border-l-2 border-[#FF5500]">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-white/10 text-white font-mono-tabular text-lg font-bold border-l-3 border-[#FF5500]">
                       123
                     </span>
                   </div>
-                  <span className="text-[9px] font-semibold tracking-[0.12em] uppercase text-slate-400 mt-0.5">
-                    Taller Móvil · Valle de Aburrá
+                  <span className="text-[10.5px] font-semibold tracking-[0.04em] uppercase text-slate-400 mt-1">
+                    Taller móvil · Valle de Aburrá
                   </span>
                 </div>
               </div>
@@ -229,9 +191,25 @@ export const FaqAndFooter: React.FC<FaqAndFooterProps> = ({
                 Mecánica de motos a domicilio, montallantas carros y motos, inyección electrónica
                 (Fuel Injection / Full Inyección FI), escáner, scooters, colisión y motores.
               </p>
-              <p className="font-mono-tabular text-sm font-semibold text-white">
-                WhatsApp y Llamadas: {BRAND_CONFIG.telefonoDisplay}
-              </p>
+              <div className="pt-1 space-y-2 text-xs text-slate-300">
+                <p className="font-mono-tabular text-sm font-semibold text-white leading-snug">
+                  <span className="block">WhatsApp y Llamadas:</span>
+                  <span className="block">{BRAND_CONFIG.telefonoDisplay}</span>
+                </p>
+                <p className="leading-snug">
+                  <span className="text-slate-400">Dirección: </span>
+                  <span className="text-white font-medium">{BRAND_CONFIG.direccionTaller}</span>
+                </p>
+                <p className="leading-snug">
+                  <span className="text-slate-400">Correo: </span>
+                  <a
+                    href={`mailto:${BRAND_CONFIG.emailContacto}`}
+                    className="text-white font-medium hover:text-[#FF5500] transition-colors"
+                  >
+                    {BRAND_CONFIG.emailContacto}
+                  </a>
+                </p>
+              </div>
             </div>
 
             <div className="space-y-2.5">
@@ -313,7 +291,7 @@ export const FaqAndFooter: React.FC<FaqAndFooterProps> = ({
           <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p>
               © {new Date().getFullYear()} Desvares 123 (desvares123.com) · Todos los derechos
-              reservados.
+              reservados · Desarrollado y diseñado por Reakta Group.
             </p>
             <p className="text-slate-400">
               {BRAND_CONFIG.horarioTexto}

@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { X, CheckCircle2, MessageSquare, AlertCircle, Wrench, MapPin, ChevronDown } from 'lucide-react';
+import {
+  X,
+  CheckCircle2,
+  MessageSquare,
+  AlertCircle,
+  Wrench,
+  MapPin,
+  ChevronDown,
+  LocateFixed,
+  Loader2,
+  Phone,
+} from 'lucide-react';
 import {
   BRAND_CONFIG,
   SERVICIOS_16,
@@ -9,22 +20,10 @@ import {
   construirTriageWhatsapp,
   validarSolicitudDespacho,
   DatosSolicitudDespacho,
+  resolverUbicacionGpsAburra,
+  resolverDireccionExactaGps,
 } from '../utils/seoAndTriage';
 import { TipoToast } from './ToastNotificaciones';
-
-export interface OrdenRegistrada {
-  id: string;
-  codigoOrden: string;
-  nombreCliente: string;
-  telefonoContacto: string;
-  zonaNombre: string;
-  barrio: string;
-  servicioTitulo: string;
-  tipoVehiculo: string;
-  referenciaVehiculo: string;
-  detallesFalla: string;
-  creadoEn: string;
-}
 
 interface ModalOrdenDespachoProps {
   abierto: boolean;
@@ -36,17 +35,18 @@ interface ModalOrdenDespachoProps {
     tipoVehiculo: 'Moto' | 'Scooter' | 'Carro / Camioneta';
     referenciaVehiculo: string;
   };
-  onOrdenCreada: (orden: OrdenRegistrada) => void;
-  tokenSesion: string;
   onMostrarToast: (toast: { tipo: TipoToast; titulo: string; mensaje: string }) => void;
 }
 
+/**
+ * Filtro inteligente previo a WhatsApp: captura los datos esenciales del vehículo,
+ * falla y ubicación GPS de alta precisión para entregar toda la información completa
+ * en un solo mensaje directo al WhatsApp del mecánico (+57 300 603 6253).
+ */
 export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
   abierto,
   onCerrar,
   valoresIniciales,
-  onOrdenCreada,
-  tokenSesion,
   onMostrarToast,
 }) => {
   const [form, setForm] = useState<DatosSolicitudDespacho>({
@@ -61,9 +61,11 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
   });
 
   const [errores, setErrores] = useState<Record<string, string>>({});
-  const [enviando, setEnviando] = useState(false);
-  const [errorServidor, setErrorServidor] = useState<string | null>(null);
-  const [ordenConfirmada, setOrdenConfirmada] = useState<OrdenRegistrada | null>(null);
+  const [obteniendoGps, setObteniendoGps] = useState(false);
+  const [estadoGps, setEstadoGps] = useState<{
+    tipo: 'obteniendo' | 'exito' | 'error';
+    mensaje: string;
+  } | null>(null);
 
   useEffect(() => {
     if (abierto) {
@@ -76,11 +78,104 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
         referenciaVehiculo: valoresIniciales.referenciaVehiculo || prev.referenciaVehiculo,
       }));
       setErrores({});
-      setErrorServidor(null);
+      setEstadoGps(null);
+      setObteniendoGps(false);
     }
   }, [abierto, valoresIniciales]);
 
   if (!abierto) return null;
+
+  const usarUbicacionPrecisaGps = () => {
+    if (obteniendoGps) return;
+
+    setObteniendoGps(true);
+    setEstadoGps({
+      tipo: 'obteniendo',
+      mensaje:
+        'Obteniendo ubicación GPS de alta precisión... Por favor espera unos segundos y autoriza el permiso en tu navegador.',
+    });
+
+    const opcionesAltaPrecision: PositionOptions = {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0,
+    };
+
+    if (typeof navigator !== 'undefined' && 'geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          const precision = Math.round(pos.coords.accuracy || 0);
+
+          // Paso 1: Asignación inmediata por microzona del Valle de Aburrá
+          const preliminar = resolverUbicacionGpsAburra(lat, lng, form.zonaSlug, precision);
+          setForm((prev) => ({
+            ...prev,
+            zonaSlug: preliminar.zonaSlug,
+            barrio: preliminar.barrioFormateado,
+          }));
+          setErrores((prev) => ({ ...prev, barrio: '' }));
+
+          // Paso 2: Enriquecimiento con geocodificación inversa (barrio y calle exacta)
+          setEstadoGps({
+            tipo: 'obteniendo',
+            mensaje: 'Coordenadas GPS recibidas. Verificando barrio y dirección exacta...',
+          });
+
+          const exacta = await resolverDireccionExactaGps(lat, lng, form.zonaSlug, precision);
+          setForm((prev) => ({
+            ...prev,
+            zonaSlug: exacta.zonaSlug,
+            barrio: exacta.barrioFormateado,
+          }));
+
+          setObteniendoGps(false);
+          const textoPrecision = precision > 0 ? ` (precisión ±${precision} m)` : '';
+          setEstadoGps({
+            tipo: 'exito',
+            mensaje: `Ubicación GPS detectada${textoPrecision}: ${exacta.zonaNombre} · ${exacta.barrioFormateado}`,
+          });
+
+          onMostrarToast({
+            tipo: 'exito',
+            titulo: 'Ubicación GPS de alta precisión lista',
+            mensaje: `${exacta.zonaNombre}: ${exacta.barrioFormateado}`,
+          });
+        },
+        (err) => {
+          setObteniendoGps(false);
+          let motivo = 'No se pudo obtener la señal GPS exacta.';
+          if (err.code === 1) {
+            motivo =
+              'Permiso de ubicación denegado. Activa el GPS del navegador o escribe tu barrio manualmente.';
+          } else if (err.code === 3) {
+            motivo =
+              'Se agotó el tiempo de espera del GPS de alta precisión (10 s). Verifica tu señal o ingresa tu barrio manualmente.';
+          }
+
+          const respaldo = resolverUbicacionGpsAburra(Number.NaN, Number.NaN, form.zonaSlug);
+          setForm((prev) => ({
+            ...prev,
+            barrio: prev.barrio.trim() ? prev.barrio : respaldo.barrioFormateado,
+          }));
+
+          setEstadoGps({
+            tipo: 'error',
+            mensaje: motivo,
+          });
+        },
+        opcionesAltaPrecision
+      );
+    } else {
+      setObteniendoGps(false);
+      setEstadoGps({
+        tipo: 'error',
+        mensaje:
+          'Tu navegador no soporta geolocalización GPS. Escribe tu barrio o punto de referencia.',
+      });
+    }
+  };
 
   const triagePreview = construirTriageWhatsapp({
     servicioId: form.servicioId,
@@ -88,61 +183,44 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
     barrio: form.barrio,
     tipoVehiculo: form.tipoVehiculo,
     vehiculoMarcaModelo: form.referenciaVehiculo,
+    nombreCliente: form.nombreCliente,
+    telefonoContacto: form.telefonoContacto,
+    detallesFalla: form.detallesFalla,
   });
 
-  const manejarEnvio = async (e: React.FormEvent) => {
+  const manejarEnvioDirectoWhatsapp = (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorServidor(null);
 
     const validacion = validarSolicitudDespacho(form);
     if (!validacion.valido) {
       setErrores(validacion.errores);
       onMostrarToast({
         tipo: 'error',
-        titulo: 'Error en el formulario',
+        titulo: 'Faltan datos para el mecánico',
         mensaje:
-          'Completa los campos obligatorios (nombre, celular, barrio y vehículo) para enviar la orden.',
+          'Completa tu nombre, celular, barrio/GPS y la marca de tu vehículo para enviar el mensaje completo a WhatsApp.',
       });
       return;
     }
 
     setErrores({});
-    setEnviando(true);
 
-    try {
-      const respuesta = await fetch('/api/solicitudes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${tokenSesion}`,
-        },
-        body: JSON.stringify(form),
-      });
+    // Disparar apertura directa hacia WhatsApp con la ficha técnica y ubicación GPS precargada
+    const enlaceTemp = document.createElement('a');
+    enlaceTemp.href = triagePreview.urlWhatsapp;
+    enlaceTemp.target = '_blank';
+    enlaceTemp.rel = 'noopener noreferrer';
+    document.body.appendChild(enlaceTemp);
+    enlaceTemp.click();
+    document.body.removeChild(enlaceTemp);
 
-      const data = await respuesta.json();
-      if (!respuesta.ok) {
-        throw new Error(data.error || 'No se pudo registrar la orden de despacho.');
-      }
+    onMostrarToast({
+      tipo: 'exito',
+      titulo: 'Redirigiendo a WhatsApp',
+      mensaje: `Enviando datos de tu ${form.referenciaVehiculo} en ${triagePreview.zona.nombre} al ${BRAND_CONFIG.telefonoDisplay}.`,
+    });
 
-      setOrdenConfirmada(data.orden);
-      onOrdenCreada(data.orden);
-      onMostrarToast({
-        tipo: 'exito',
-        titulo: '¡Orden de despacho enviada con éxito!',
-        mensaje: `Solicitud #${data.orden.codigoOrden} registrada para ${data.orden.zonaNombre} (${data.orden.barrio}).`,
-      });
-    } catch (err: unknown) {
-      const mensaje =
-        err instanceof Error ? err.message : 'Error de conexión al registrar la solicitud.';
-      setErrorServidor(mensaje);
-      onMostrarToast({
-        tipo: 'error',
-        titulo: 'No se pudo enviar la orden',
-        mensaje,
-      });
-    } finally {
-      setEnviando(false);
-    }
+    onCerrar();
   };
 
   return (
@@ -153,33 +231,27 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
       className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-950/80 backdrop-blur-xs"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
-          setOrdenConfirmada(null);
           onCerrar();
         }
       }}
     >
       <div className="relative w-full max-w-xl max-h-[calc(100dvh-1.25rem)] sm:max-h-[90vh] flex flex-col rounded-2xl bg-white border border-slate-200 shadow-2xl p-4 sm:p-6 text-slate-900">
-        {/* Cabecera SIEMPRE visible en la parte superior sin cortarse jamás */}
+        {/* Cabecera fija en la parte superior */}
         <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-200 shrink-0">
           <div>
             <p className="text-[11px] sm:text-xs font-bold text-[#FF5500]">
-              Desvares 123 · Línea Directa {BRAND_CONFIG.telefonoDisplay}
+              Desvares 123 · Atención directa {BRAND_CONFIG.telefonoDisplay}
             </p>
             <h2
               id="modal-despacho-titulo"
               className="font-display text-lg sm:text-2xl font-bold text-slate-900 mt-0.5 leading-snug"
             >
-              {ordenConfirmada
-                ? `Solicitud registrada #${ordenConfirmada.codigoOrden}`
-                : 'Solicitar mecánico a domicilio'}
+              Datos para enviar tu mecánico por WhatsApp
             </h2>
           </div>
           <button
             type="button"
-            onClick={() => {
-              setOrdenConfirmada(null);
-              onCerrar();
-            }}
+            onClick={onCerrar}
             aria-label="Cerrar ventana de solicitud de servicio"
             className="p-1.5 sm:p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
           >
@@ -187,67 +259,9 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
           </button>
         </div>
 
-        {/* Contenido scrolleable con min-h-0 obligatorio para flexbox */}
+        {/* Contenido scrolleable */}
         <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain pt-3 pb-1 pr-1">
-
-        {ordenConfirmada ? (
-          <div className="py-5 space-y-5">
-            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 space-y-2">
-              <div className="flex items-center gap-2 text-emerald-700 font-bold text-sm">
-                <CheckCircle2 className="w-5 h-5 shrink-0" aria-hidden="true" />
-                <span>Solicitud de servicio registrada con éxito</span>
-              </div>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                Código de solicitud:{' '}
-                <strong className="font-mono-tabular text-slate-900">
-                  {ordenConfirmada.codigoOrden}
-                </strong>{' '}
-                para <strong className="text-slate-900">{ordenConfirmada.servicioTitulo}</strong> en{' '}
-                <strong className="text-slate-900">
-                  {ordenConfirmada.zonaNombre} ({ordenConfirmada.barrio})
-                </strong>.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <p className="text-xs sm:text-sm text-slate-600">
-                Toca el botón inferior para compartir tu ubicación GPS actual al WhatsApp{' '}
-                <strong className="font-mono-tabular text-slate-900">
-                  {BRAND_CONFIG.telefonoDisplay}
-                </strong>:
-              </p>
-
-              <a
-                href={triagePreview.urlWhatsapp}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors"
-              >
-                <MessageSquare className="w-4 h-4 shrink-0" aria-hidden="true" />
-                <span>Confirmar ubicación GPS por WhatsApp</span>
-              </a>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setOrdenConfirmada(null);
-                  onCerrar();
-                }}
-                className="w-full px-4 py-2.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
-              >
-                Volver al sitio web
-              </button>
-            </div>
-          </div>
-        ) : (
-          <form onSubmit={manejarEnvio} noValidate className="mt-4 space-y-4">
-            {errorServidor && (
-              <div className="p-3 rounded-lg bg-red-50 border border-red-200 flex items-center gap-2 text-xs text-red-700">
-                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" aria-hidden="true" />
-                <span>{errorServidor}</span>
-              </div>
-            )}
-
+          <form onSubmit={manejarEnvioDirectoWhatsapp} noValidate className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label
@@ -311,11 +325,16 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
                     {(form.tipoVehiculo === 'Carro / Camioneta'
                       ? SERVICIOS_16.filter(
                           (s) =>
-                            s.id === 'montallantas-carros-y-motos' || s.id === 'reinicio-de-bateria'
+                            s.id === 'montallantas-carros-y-motos' ||
+                            s.id === 'reinicio-de-bateria'
                         )
                       : SERVICIOS_16
                     ).map((s) => (
-                      <option key={s.id} value={s.id} className="py-2 text-slate-900 font-medium bg-white">
+                      <option
+                        key={s.id}
+                        value={s.id}
+                        className="py-2 text-slate-900 font-medium bg-white"
+                      >
                         {s.numero}. {s.tituloCorto}
                       </option>
                     ))}
@@ -344,7 +363,11 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
                     className="w-full appearance-none pl-10 pr-10 py-2.5 rounded-xl bg-slate-50/90 hover:bg-white focus:bg-white border border-slate-300 hover:border-slate-400 focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/20 text-sm font-semibold text-slate-900 transition-all cursor-pointer shadow-2xs outline-none"
                   >
                     {ZONAS_COBERTURA.map((z) => (
-                      <option key={z.slug} value={z.slug} className="py-2 text-slate-900 font-medium bg-white">
+                      <option
+                        key={z.slug}
+                        value={z.slug}
+                        className="py-2 text-slate-900 font-medium bg-white"
+                      >
                         {z.nombre} ({z.tiempoArribo})
                       </option>
                     ))}
@@ -356,14 +379,64 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
               </div>
             </div>
 
+            {/* Mensaje de estado en tiempo real mientras se obtiene o confirma el GPS de alta precisión */}
+            {estadoGps && (
+              <div
+                role="status"
+                aria-live="polite"
+                className={`p-3 rounded-lg border flex items-start gap-2.5 text-xs leading-relaxed transition-all ${
+                  estadoGps.tipo === 'obteniendo'
+                    ? 'bg-orange-50 border-orange-200 text-orange-900'
+                    : estadoGps.tipo === 'exito'
+                    ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                    : 'bg-amber-50 border-amber-200 text-amber-900'
+                }`}
+              >
+                {estadoGps.tipo === 'obteniendo' ? (
+                  <Loader2
+                    className="w-4 h-4 text-[#FF5500] animate-spin shrink-0 mt-0.5"
+                    aria-hidden="true"
+                  />
+                ) : estadoGps.tipo === 'exito' ? (
+                  <CheckCircle2
+                    className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <AlertCircle
+                    className="w-4 h-4 text-amber-600 shrink-0 mt-0.5"
+                    aria-hidden="true"
+                  />
+                )}
+                <span>{estadoGps.mensaje}</span>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label
-                  htmlFor="orden-barrio"
-                  className="block text-xs font-semibold text-slate-700 mb-1"
-                >
-                  Barrio o punto de referencia *
-                </label>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <label
+                    htmlFor="orden-barrio"
+                    className="block text-xs font-semibold text-slate-700"
+                  >
+                    Barrio o punto de referencia *
+                  </label>
+                  <button
+                    type="button"
+                    onClick={usarUbicacionPrecisaGps}
+                    disabled={obteniendoGps}
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-[#FF5500] hover:text-[#E04800] disabled:opacity-60 transition-colors cursor-pointer"
+                  >
+                    {obteniendoGps ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" aria-hidden="true" />
+                    ) : (
+                      <LocateFixed className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                    )}
+                    <span>
+                      {obteniendoGps ? 'Localizando GPS...' : 'Usar mi ubicación GPS'}
+                    </span>
+                  </button>
+                </div>
                 <input
                   id="orden-barrio"
                   type="text"
@@ -401,45 +474,42 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
                 htmlFor="orden-detalles"
                 className="block text-xs font-semibold text-slate-700 mb-1"
               >
-                Detalle adicional (opcional)
+                Detalle adicional de la falla (opcional)
               </label>
               <textarea
                 id="orden-detalles"
                 rows={2}
                 value={form.detallesFalla}
                 onChange={(e) => setForm({ ...form, detallesFalla: e.target.value })}
-                placeholder="Ej. Se apagó andando, llanta trasera pinchada..."
+                placeholder="Ej. Se apagó andando, llanta trasera pinchada, testigo FI encendido..."
                 className="w-full px-3.5 py-2 rounded-lg bg-slate-50 border border-slate-300 text-sm text-slate-900 focus:outline-none focus:border-[#FF5500]"
               />
             </div>
 
             <div className="p-3.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-slate-700 leading-relaxed">
               <strong className="text-emerald-800">Cotización y asesoría inicial GRATIS:</strong>{' '}
-              Te confirmamos disponibilidad, tiempo exacto de llegada y valor transparente antes de
-              enviar al mecánico.
+              Al oprimir el botón se abrirá nuestro WhatsApp con todos estos datos listos para
+              enviarte el mecánico de inmediato.
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
               <button
                 type="submit"
-                disabled={enviando}
-                className="w-full sm:flex-1 px-5 py-3 text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] disabled:opacity-50 rounded-lg transition-colors cursor-pointer"
+                className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors cursor-pointer shadow-xs"
               >
-                {enviando ? 'Enviando solicitud...' : 'Confirmar solicitud de servicio'}
+                <MessageSquare className="w-4 h-4 shrink-0" aria-hidden="true" />
+                <span>Enviar datos y abrir WhatsApp</span>
               </button>
 
               <a
-                href={triagePreview.urlWhatsapp}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`tel:${BRAND_CONFIG.telefonoE164}`}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-3 text-xs sm:text-sm font-semibold text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors whitespace-nowrap"
               >
-                <MessageSquare className="w-4 h-4 text-[#FF5500]" aria-hidden="true" />
-                <span>Ir directo a WhatsApp</span>
+                <Phone className="w-4 h-4 text-[#FF5500]" aria-hidden="true" />
+                <span>Llamar ahora</span>
               </a>
             </div>
           </form>
-        )}
         </div>
       </div>
     </div>

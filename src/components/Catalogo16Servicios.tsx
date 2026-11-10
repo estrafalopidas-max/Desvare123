@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, MessageSquare, RotateCcw } from 'lucide-react';
+import { Search, MessageSquare, Phone, RotateCcw } from 'lucide-react';
 import { CategoriaServicio, BRAND_CONFIG } from '../data/desvaresData';
 import {
   filtrarServicios,
@@ -7,8 +7,6 @@ import {
 } from '../utils/seoAndTriage';
 
 interface Catalogo16ServiciosProps {
-  zonaActualSlug: string;
-  barrioActual: string;
   onSeleccionarServicioParaDespacho: (servicioId: string) => void;
 }
 
@@ -20,8 +18,6 @@ const TABS_CATEGORIAS: { id: CategoriaServicio | 'todos'; label: string }[] = [
 ];
 
 export const Catalogo16Servicios: React.FC<Catalogo16ServiciosProps> = ({
-  zonaActualSlug,
-  barrioActual,
   onSeleccionarServicioParaDespacho,
 }) => {
   const [categoriaActiva, setCategoriaActiva] = useState<CategoriaServicio | 'todos'>('todos');
@@ -148,62 +144,59 @@ export const Catalogo16Servicios: React.FC<Catalogo16ServiciosProps> = ({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {serviciosFiltrados.map((servicio) => {
-              const triageCard = construirTriageWhatsapp({
-                servicioId: servicio.id,
-                zonaSlug: zonaActualSlug,
-                barrio: barrioActual,
-              });
-
-              return (
-                <article
-                  key={servicio.id}
-                  className="p-5 rounded-xl bg-[#F8FAFC] border border-slate-200/90 flex flex-col justify-between hover:border-slate-300 transition-colors"
-                >
-                  <div className="space-y-2.5">
-                    <div className="flex items-center justify-between text-xs text-slate-500">
-                      <span className="font-mono-tabular font-bold text-[#FF5500]">
-                        #{servicio.numero}
-                      </span>
-                      <span>
-                        {servicio.etiquetaCategoria} ·{' '}
-                        <strong className="font-mono-tabular text-slate-700 font-semibold">
-                          {servicio.tiempoRespuesta}
-                        </strong>
-                      </span>
-                    </div>
-
-                    <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
-                      {servicio.titulo}
-                    </h3>
-
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                      {servicio.descripcion}
-                    </p>
+            {serviciosFiltrados.map((servicio) => (
+              <article
+                key={servicio.id}
+                className="p-5 rounded-xl bg-[#F8FAFC] border border-slate-200/90 flex flex-col justify-between hover:border-slate-300 transition-colors"
+              >
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between text-xs text-slate-500">
+                    <span className="font-mono-tabular font-bold text-[#FF5500]">
+                      #{servicio.numero}
+                    </span>
+                    <span>
+                      {servicio.etiquetaCategoria} ·{' '}
+                      <strong className="font-mono-tabular text-slate-700 font-semibold">
+                        {servicio.tiempoRespuesta}
+                      </strong>
+                    </span>
                   </div>
 
-                  <div className="pt-4 mt-4 border-t border-slate-200/80 flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => onSeleccionarServicioParaDespacho(servicio.id)}
-                      className="flex-1 px-3 py-2 text-xs font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors whitespace-nowrap truncate cursor-pointer"
-                    >
-                      Solicitar {servicio.tituloCorto}
-                    </button>
+                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+                    {servicio.titulo}
+                  </h3>
 
-                    <a
-                      href={triageCard.urlWhatsapp}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Solicitar ${servicio.tituloCorto} por WhatsApp`}
-                      className="inline-flex items-center justify-center p-2 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 transition-colors shrink-0"
-                    >
-                      <MessageSquare className="w-4 h-4 text-[#FF5500]" aria-hidden="true" />
-                    </a>
-                  </div>
-                </article>
-              );
-            })}
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    {servicio.descripcion}
+                  </p>
+                </div>
+
+                <div className="pt-4 mt-4 border-t border-slate-200/80 flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => onSeleccionarServicioParaDespacho(servicio.id)}
+                    data-ga-conversion="solicitar-rescate-ahora"
+                    data-ga-label={`Solicitar ${servicio.tituloCorto}`}
+                    data-ga-location="catalogo_16_servicios"
+                    data-ga-service={servicio.id}
+                    data-ga-channel="whatsapp"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-white bg-[#FF5500] hover:bg-[#E04800] rounded-lg transition-colors whitespace-nowrap truncate cursor-pointer"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                    <span className="truncate">Solicitar {servicio.tituloCorto}</span>
+                  </button>
+
+                  <a
+                    href={`tel:${BRAND_CONFIG.telefonoE164}`}
+                    aria-label={`Llamar para solicitar ${servicio.tituloCorto}`}
+                    title={`Llamar ahora al ${BRAND_CONFIG.telefonoDisplay}`}
+                    className="inline-flex items-center justify-center p-2 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 transition-colors shrink-0"
+                  >
+                    <Phone className="w-4 h-4 text-[#FF5500]" aria-hidden="true" />
+                  </a>
+                </div>
+              </article>
+            ))}
           </div>
         )}
       </div>
