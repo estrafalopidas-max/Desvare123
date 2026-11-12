@@ -195,7 +195,7 @@ export const MapaCoberturaAburra: React.FC<MapaCoberturaAburraProps> = ({
               <div className="relative w-full h-[340px] sm:h-[370px] bg-slate-900">
                 <iframe
                   key={puntoActivo.slug}
-                  title={`Google Maps - Cobertura Desvares 123 en ${puntoActivo.nombre}`}
+                  title={`Google Maps - Cobertura Mecánicos a domicilio en ${puntoActivo.nombre}`}
                   src={`https://maps.google.com/maps?q=${puntoActivo.lat},${puntoActivo.lng}&z=13&hl=es&output=embed`}
                   className="w-full h-full border-0"
                   loading="lazy"
@@ -471,7 +471,7 @@ export const MapaCoberturaAburra: React.FC<MapaCoberturaAburraProps> = ({
           <div className="space-y-2 pt-2">
             <a
               href={`https://wa.me/${BRAND_CONFIG.whatsappNumero}?text=${encodeURIComponent(
-                `Hola Desvares 123, vi la disponibilidad en el mapa para ${puntoActivo.nombre} (${puntoActivo.zona.tiempoArribo}) y necesito un mecánico / montallantas a domicilio.`
+                `Hola Mecánicos a domicilio, vi la disponibilidad en el mapa para ${puntoActivo.nombre} (${puntoActivo.zona.tiempoArribo}) y necesito un mecánico / montallantas a domicilio.`
               )}`}
               target="_blank"
               rel="noopener noreferrer"

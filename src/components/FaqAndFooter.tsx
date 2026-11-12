@@ -163,27 +163,22 @@ export const FaqAndFooter: React.FC<FaqAndFooterProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="space-y-3">
               <div className="inline-flex items-center gap-3.5">
-                <span className="relative inline-flex items-center justify-center w-14 h-14 rounded-xl bg-slate-800 border border-slate-700 shrink-0">
+                <span className="relative inline-flex items-center justify-center w-12 h-12 rounded-xl bg-slate-800 border-b-3 border-[#FF5500] shrink-0">
                   <Wrench
-                    className="w-7 h-7 text-white stroke-[2.25] -rotate-12"
+                    className="w-6 h-6 text-white stroke-[2.4] -rotate-12"
                     aria-hidden="true"
                   />
                   <span
-                    className="absolute bottom-2 right-2 w-2.5 h-2.5 rounded-full bg-[#FF5500]"
+                    className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#FF5500] ring-2 ring-slate-800"
                     aria-hidden="true"
                   />
                 </span>
-                <div className="inline-flex flex-col leading-none">
-                  <div className="flex items-center gap-2">
-                    <span className="font-display text-4xl font-bold text-white tracking-tight">
-                      DESVARES
-                    </span>
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-white/10 text-white font-mono-tabular text-lg font-bold border-l-3 border-[#FF5500]">
-                      123
-                    </span>
-                  </div>
-                  <span className="text-[10.5px] font-semibold tracking-[0.04em] uppercase text-slate-400 mt-1">
-                    Taller móvil · Valle de Aburrá
+                <div className="inline-flex flex-col justify-center leading-none">
+                  <span className="font-display text-[30px] font-bold tracking-tight text-white leading-[0.88]">
+                    MECÁNICOS
+                  </span>
+                  <span className="font-display text-[29px] font-bold tracking-tight uppercase text-[#FF5500] leading-[0.9] mt-0.5">
+                    A domicilio
                   </span>
                 </div>
               </div>
@@ -290,8 +285,8 @@ export const FaqAndFooter: React.FC<FaqAndFooterProps> = ({
 
           <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p>
-              © {new Date().getFullYear()} Desvares 123 (desvares123.com) · Todos los derechos
-              reservados · Desarrollado y diseñado por Reakta Group.
+              © {new Date().getFullYear()} Mecánicos a domicilio (mecanicosadomicilio.org) · Todos
+              los derechos reservados · Desarrollado y diseñado por Reakta Group.
             </p>
             <p className="text-slate-400">
               {BRAND_CONFIG.horarioTexto}

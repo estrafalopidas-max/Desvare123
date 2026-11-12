@@ -4,8 +4,8 @@
  */
 
 export const BRAND_CONFIG = {
-  nombre: 'Desvares 123',
-  dominio: 'https://desvares123.com',
+  nombre: 'Mecánicos a domicilio',
+  dominio: 'https://mecanicosadomicilio.org',
   telefonoDisplay: '+57 300 603 6253',
   telefonoE164: '+573006036253',
   whatsappNumero: '573006036253',
@@ -291,7 +291,7 @@ export const ZONAS_COBERTURA: ZonaCobertura[] = [
   {
     slug: 'itagui',
     nombre: 'Itagüí',
-    tituloSeo: 'Mecánico de motos y montallantas a domicilio en Itagüí – Desvares 123',
+    tituloSeo: 'Mecánico de motos y montallantas a domicilio en Itagüí – Mecánicos a domicilio',
     descripcionSeo:
       '¿Varado o pinchado en Itagüí? Mecánico de motos a domicilio y montallantas carros y motos en Parque de Itagüí, Santa María, Mayorista, Ditaires y Autopista Sur. Llegamos en 20 min.',
     tiempoArribo: '15–25 min',
@@ -322,7 +322,7 @@ export const ZONAS_COBERTURA: ZonaCobertura[] = [
   {
     slug: 'sabaneta',
     nombre: 'Sabaneta',
-    tituloSeo: 'Mecánico de motos y montallantas a domicilio en Sabaneta – Desvares 123',
+    tituloSeo: 'Mecánico de motos y montallantas a domicilio en Sabaneta – Mecánicos a domicilio',
     descripcionSeo:
       'Servicio de desvare de motos y montallantas para carros y motos a domicilio en Sabaneta: Aves María, Mayorca, Parque de Sabaneta, Vegas y La Doctora. Expertos en Scooters y FI.',
     tiempoArribo: '15–25 min',
@@ -351,7 +351,7 @@ export const ZONAS_COBERTURA: ZonaCobertura[] = [
   {
     slug: 'envigado',
     nombre: 'Envigado',
-    tituloSeo: 'Mecánico de motos y montallantas a domicilio en Envigado – Desvares 123',
+    tituloSeo: 'Mecánico de motos y montallantas a domicilio en Envigado – Mecánicos a domicilio',
     descripcionSeo:
       'Mecánico de motos a domicilio y montallantas móvil en Envigado: Las Vegas, Zúñiga, Loma de las Brujas, El Portal, Alcalá, San Marcos y Las Palmas. Escáner, Baterías y Despinche.',
     tiempoArribo: '20–30 min',
@@ -384,7 +384,7 @@ export const ZONAS_COBERTURA: ZonaCobertura[] = [
   {
     slug: 'la-estrella',
     nombre: 'La Estrella',
-    tituloSeo: 'Mecánico de motos y montallantas a domicilio en La Estrella – Desvares 123',
+    tituloSeo: 'Mecánico de motos y montallantas a domicilio en La Estrella – Mecánicos a domicilio',
     descripcionSeo:
       'Asistencia de mecánica de motos y montallantas para carros y motos a domicilio en La Estrella, Ancón Sur, La Tablaza y Variante Caldas. Desvares, guayas, baterías y taller.',
     tiempoArribo: '20–30 min',
@@ -409,7 +409,7 @@ export const ZONAS_COBERTURA: ZonaCobertura[] = [
   {
     slug: 'medellin',
     nombre: 'Medellín',
-    tituloSeo: 'Mecánico de motos y montallantas a domicilio en Medellín – Desvares 123',
+    tituloSeo: 'Mecánico de motos y montallantas a domicilio en Medellín – Mecánicos a domicilio',
     descripcionSeo:
       'Mecánico de motos a domicilio y montallantas carros y motos en Medellín: El Poblado, Guayabal, Belén, Laureles, La América, Los Colores, Robledo, Castilla, San Javier, Industriales y Centro. Inyección Electrónica (Full Inyección / Fuel Injection), Escáner, Scooters y Colisión.',
     tiempoArribo: '25–35 min',
@@ -459,7 +459,7 @@ export const PREGUNTAS_FRECUENTES: PreguntaFrecuente[] = [
     id: 'faq-montallantas-carros-motos',
     pregunta: '¿El servicio de montallantas a domicilio atiende tanto motos como carros?',
     respuesta:
-      'Sí. En Desvares 123 contamos con herramienta especializada para despinche de automóviles, camionetas y motocicletas (tanto llantas Sellomatic/Tubeless como llantas con neumático o cámara), además de reinicio de batería para carros y motos.',
+      'Sí. En Mecánicos a domicilio contamos con herramienta especializada para despinche de automóviles, camionetas y motocicletas (tanto llantas Sellomatic/Tubeless como llantas con neumático o cámara), además de reinicio de batería para carros y motos.',
   },
   {
     id: 'faq-tiempo-llegada',

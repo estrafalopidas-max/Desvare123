@@ -149,7 +149,7 @@ function obtenerBaseUrlSegura(req: Request): string {
     return process.env.APP_URL.replace(/\/$/, '');
   }
   const host = (req.get('host') || '').trim();
-  const hostConfiable = /^([a-zA-Z0-9-]+\.)*(desvares123\.com|localhost|127\.0\.0\.1|run\.app)(:\d+)?$/i.test(
+  const hostConfiable = /^([a-zA-Z0-9-]+\.)*(mecanicosadomicilio\.org|desvares123\.com|localhost|127\.0\.0\.1|run\.app)(:\d+)?$/i.test(
     host
   );
   if (hostConfiable) {
@@ -429,7 +429,7 @@ ${urls
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor Desvares 123 activo en http://0.0.0.0:${PORT}`);
+    console.log(`Servidor Mecánicos a domicilio activo en http://0.0.0.0:${PORT}`);
   });
 }
 

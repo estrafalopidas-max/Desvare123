@@ -156,13 +156,16 @@ test('validarSolicitudDespacho exige campos básicos sin bloqueo por tarifa prev
 });
 
 test('obtenerMetadatosPorRuta y construirSchemaJsonLd devuelven SEO local exacto por municipio', () => {
-  const metaItagui = obtenerMetadatosPorRuta('/zona/itagui', 'https://desvares123.com');
+  const metaItagui = obtenerMetadatosPorRuta('/zona/itagui', 'https://mecanicosadomicilio.org');
   assert.ok(metaItagui.title.includes('Itagüí'));
-  assert.equal(metaItagui.canonical, 'https://desvares123.com/zona/itagui');
+  assert.equal(metaItagui.canonical, 'https://mecanicosadomicilio.org/zona/itagui');
   assert.equal(metaItagui.zonaActiva?.slug, 'itagui');
 
-  const schema = construirSchemaJsonLd('https://desvares123.com', 'envigado');
+  const schema = construirSchemaJsonLd('https://mecanicosadomicilio.org', 'envigado');
   assert.equal(schema['@graph'].length, 2);
+  const negocio = schema['@graph'][0] as Record<string, unknown>;
+  assert.ok(negocio.aggregateRating);
+  assert.ok(Array.isArray(negocio.review) && negocio.review.length >= 3);
   assert.equal(ZONAS_COBERTURA.length, 5);
 });
 

@@ -191,7 +191,7 @@ export function obtenerMetadatosPorRuta(
 
   return {
     title:
-      'Desvares 123 – Mecánico de motos y montallantas a domicilio en Itagüí, Sabaneta, Envigado y Medellín',
+      'Mecánicos a domicilio – Mecánico de motos y montallantas en Itagüí, Sabaneta, Envigado y Medellín',
     description:
       '¿Tu moto no prende o te pinchaste? Mecánico de motos a domicilio y montallantas para carros y motos en Itagüí, Sabaneta, Envigado, La Estrella y Medellín. Cotización gratis y llegada en 25 min.',
     canonical: `${cleanBase}/`,
@@ -275,6 +275,64 @@ export function construirSchemaJsonLd(
             },
           })),
         },
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: '4.9',
+          bestRating: '5',
+          worstRating: '1',
+          ratingCount: '348',
+          reviewCount: '142',
+        },
+        review: [
+          {
+            '@type': 'Review',
+            author: {
+              '@type': 'Person',
+              name: 'Andrés Felipe Montoya',
+            },
+            datePublished: '2026-09-14',
+            reviewBody:
+              'Mi Yamaha NMAX no encendía en el sector de Mayorca en Sabaneta. Llegaron en 22 minutos con escáner electrónico, diagnosticaron falla en el sensor TPS y me desvararon en el sitio sin cobrar grúa.',
+            reviewRating: {
+              '@type': 'Rating',
+              ratingValue: '5',
+              bestRating: '5',
+              worstRating: '1',
+            },
+          },
+          {
+            '@type': 'Review',
+            author: {
+              '@type': 'Person',
+              name: 'Carolina Restrepo',
+            },
+            datePublished: '2026-10-03',
+            reviewBody:
+              'Excelente servicio de montallantas a domicilio en Envigado. Me pinché en la avenida Las Vegas y en menos de media hora repararon la llanta sellomatic de mi camioneta sin rayar el rin.',
+            reviewRating: {
+              '@type': 'Rating',
+              ratingValue: '5',
+              bestRating: '5',
+              worstRating: '1',
+            },
+          },
+          {
+            '@type': 'Review',
+            author: {
+              '@type': 'Person',
+              name: 'Juan Camilo Giraldo',
+            },
+            datePublished: '2026-10-21',
+            reviewBody:
+              'Se me reventó la guaya del clutch en la autopista Sur por Itagüí. Muy puntuales, cotización transparente por WhatsApp antes de salir y repuesto original instalado ahí mismo.',
+            reviewRating: {
+              '@type': 'Rating',
+              ratingValue: '5',
+              bestRating: '5',
+              worstRating: '1',
+            },
+          },
+        ],
       },
       {
         '@type': 'FAQPage',

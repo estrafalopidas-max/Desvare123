@@ -194,7 +194,7 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
             />
             <img
               src={imgHeroAttrs.fallbackJpg}
-              alt="Unidad móvil de rescate mecánico de motos y montallantas a domicilio Desvares 123"
+              alt="Unidad móvil de rescate mecánico de motos y montallantas Mecánicos a domicilio"
               width={1280}
               height={720}
               loading={imgHeroAttrs.loading}
@@ -219,7 +219,7 @@ export const HeroTriageSection: React.FC<HeroTriageSectionProps> = ({
             playsInline
             preload="metadata"
             onError={() => setVideoError(true)}
-            aria-label="Video de mecánico de motos y unidad móvil Desvares 123 en atención nocturna"
+            aria-label="Video de mecánico de motos y unidad móvil Mecánicos a domicilio en atención nocturna"
             className="hidden md:block absolute inset-0 w-full h-full object-cover object-center"
           />
         )}

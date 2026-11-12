@@ -39,34 +39,48 @@ export const Navbar: React.FC<NavbarProps> = ({ onAbrirModalDespacho, onResetear
             setMenuMovilAbierto(false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className="group inline-flex items-center gap-2 sm:gap-3.5 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-[#FF5500]"
+          className="group inline-flex items-center gap-2.5 sm:gap-3.5 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-[#FF5500]"
         >
+          {/* Emblema automotriz en grafito y naranja rescate */}
           <span
             data-testid="logo-tool-icon"
-            className="relative inline-flex items-center justify-center w-9 h-9 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl bg-slate-100 border border-slate-200/90 text-[#0F172A] group-hover:border-[#FF5500]/50 group-hover:bg-orange-50/40 transition-colors shrink-0"
+            className="relative inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#0F172A] border-b-3 border-[#FF5500] text-white shadow-xs group-hover:bg-slate-800 transition-colors shrink-0"
           >
             <Wrench
-              className="w-5 h-5 sm:w-7 sm:h-7 text-[#0F172A] stroke-[2.25] -rotate-12 group-hover:text-[#FF5500] transition-colors"
+              className="w-5 h-5 sm:w-6 sm:h-6 text-white stroke-[2.4] -rotate-12 group-hover:text-[#FF5500] transition-colors"
               aria-hidden="true"
             />
             <span
-              className="absolute bottom-1 sm:bottom-2 right-1 sm:right-2 w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FF5500]"
+              className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#FF5500] ring-2 ring-[#0F172A]"
               aria-hidden="true"
             />
           </span>
 
-          <div className="inline-flex flex-col justify-center leading-none shrink-0">
-            <div className="flex items-center gap-1 sm:gap-2">
-              <span className="font-display text-[22px] sm:text-[38px] font-bold tracking-tight text-[#0F172A]">
-                DESVARES
+          {/* Bloque tipográfico simétrico de dos niveles sin expandir kerning */}
+          <div className="inline-flex items-center gap-3 shrink-0">
+            <div className="inline-flex flex-col justify-center leading-none">
+              <span
+                data-testid="logo-line-mecanicos"
+                className="font-display text-[22px] sm:text-[30px] font-bold tracking-tight text-[#0F172A] leading-[0.88]"
+              >
+                MECÁNICOS
               </span>
-              <span className="inline-flex items-center px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded sm:rounded-md bg-slate-900 text-white font-mono-tabular text-xs sm:text-xl font-bold tracking-normal border-l-2 sm:border-l-3 border-[#FF5500]">
-                123
+              <span
+                data-testid="logo-line-adomicilio"
+                className="font-display text-[20.7px] sm:text-[29px] font-bold tracking-tight uppercase text-[#FF5500] leading-[0.9] mt-0.5"
+              >
+                A domicilio
               </span>
             </div>
-            <span className="text-[6.8px] sm:text-[11px] font-semibold tracking-[0.02em] sm:tracking-[0.035em] uppercase text-slate-500 mt-0.5 sm:mt-1">
-              Taller móvil · Valle de Aburrá
-            </span>
+
+            <div className="hidden xl:flex flex-col justify-center pl-3 border-l border-slate-200 leading-tight">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-800">
+                Taller móvil
+              </span>
+              <span className="text-[10px] font-medium text-slate-500">
+                Valle de Aburrá
+              </span>
+            </div>
           </div>
         </a>
 

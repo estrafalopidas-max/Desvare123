@@ -70,7 +70,7 @@ export const SiloCoberturaLocal: React.FC<SiloCoberturaLocalProps> = ({
             <div className="shrink-0">
               <a
                 href={`https://wa.me/${BRAND_CONFIG.whatsappNumero}?text=${encodeURIComponent(
-                  `Hola Desvares 123, necesito mecánico de motos / montallantas a domicilio en ${zonaActiva.nombre}${
+                  `Hola Mecánicos a domicilio, necesito mecánico de motos / montallantas a domicilio en ${zonaActiva.nombre}${
                     barrioSeleccionado ? ` (Sector ${barrioSeleccionado})` : ''
                   }. Solicito cotización y asesoría gratis a domicilio.`
                 )}`}

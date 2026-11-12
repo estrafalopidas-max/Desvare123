@@ -240,7 +240,7 @@ export const ModalOrdenDespacho: React.FC<ModalOrdenDespachoProps> = ({
         <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-200 shrink-0">
           <div>
             <p className="text-[11px] sm:text-xs font-bold text-[#FF5500]">
-              Desvares 123 · Atención directa {BRAND_CONFIG.telefonoDisplay}
+              Mecánicos a domicilio · Atención directa {BRAND_CONFIG.telefonoDisplay}
             </p>
             <h2
               id="modal-despacho-titulo"

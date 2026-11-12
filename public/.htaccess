@@ -1,7 +1,11 @@
-# Configuración Apache / cPanel HostGator para Desvares 123
+# Configuración Apache / cPanel HostGator para Mecánicos a domicilio (mecanicosadomicilio.org)
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # Redirección 301 permanente desde desvares123.com hacia el dominio principal mecanicosadomicilio.org
+  RewriteCond %{HTTP_HOST} ^(www\.)?desvares123\.com$ [NC]
+  RewriteRule ^(.*)$ https://mecanicosadomicilio.org/$1 [L,R=301]
 
   # Forzar HTTPS
   RewriteCond %{HTTPS} off
